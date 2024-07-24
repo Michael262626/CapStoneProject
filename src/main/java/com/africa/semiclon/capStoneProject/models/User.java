@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 
 import static jakarta.persistence.GenerationType.AUTO;
@@ -39,6 +40,9 @@ public class User {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime timeUpdated;
+    @ElementCollection
+    @Enumerated(EnumType.STRING)
+    private Set<Authority> authorities;
 
     @PrePersist
     private void setTimeCreated(){
