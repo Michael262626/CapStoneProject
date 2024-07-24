@@ -1,4 +1,4 @@
-package com.africa.semiclon.capStoneProject.models;
+package com.africa.semiclon.capStoneProject.data.models;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -17,15 +17,14 @@ import static java.time.LocalDateTime.now;
 
 @Getter
 @Setter
-@Entity
 @ToString
-public class ContentInfo {
+@Entity
+public class Notification {
     @Id
     @GeneratedValue(strategy = AUTO)
-    private Long id;
-    private String title;
-    private String body;
-    @Setter(AccessLevel.NONE)
+    private Long notificationId;
+    private Long userId;
+    private String message;
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime timeCreated;

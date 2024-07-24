@@ -1,4 +1,4 @@
-package com.africa.semiclon.capStoneProject.models;
+package com.africa.semiclon.capStoneProject.data.models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

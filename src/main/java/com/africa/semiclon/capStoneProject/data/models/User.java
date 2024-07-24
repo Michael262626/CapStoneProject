@@ -1,4 +1,4 @@
-package com.africa.semiclon.capStoneProject.models;
+package com.africa.semiclon.capStoneProject.data.models;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -11,20 +11,28 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.Set;
+
 
 import static jakarta.persistence.GenerationType.AUTO;
 import static java.time.LocalDateTime.now;
 
-@Getter
 @Setter
-@ToString
+@Getter
 @Entity
-public class Notification {
+@ToString
+@Table(name = "users")
+public class User {
     @Id
     @GeneratedValue(strategy = AUTO)
-    private Long notificationId;
-    private Long userId;
-    private String message;
+    private Long id;
+    private String username;
+    @Column(unique = true)
+    private String email;
+    private String password;
+    @OneToOne
+    private Address address;
+    @Setter(AccessLevel.NONE)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime timeCreated;
@@ -32,6 +40,9 @@ public class Notification {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime timeUpdated;
+    @ElementCollection
+    @Enumerated(EnumType.STRING)
+    private Set<Authority> authorities;
 
     @PrePersist
     private void setTimeCreated(){
