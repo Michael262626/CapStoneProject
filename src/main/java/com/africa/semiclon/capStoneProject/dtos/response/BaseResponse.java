@@ -7,6 +7,6 @@ import lombok.Setter;
 @Getter
 public class BaseResponse <T> {
     private int code;
-    private boolean status;
+    private boolean success;
     private T data;
 }
