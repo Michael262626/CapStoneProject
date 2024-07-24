@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ public class Waste {
     @GeneratedValue(strategy = AUTO)
     private Long wasteId;
     private Long userId;
+    private String url;
     @Enumerated(value = STRING)
     private Category type;
     private BigDecimal price;
