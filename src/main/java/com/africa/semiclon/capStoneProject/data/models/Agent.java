@@ -8,23 +8,26 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 import static jakarta.persistence.GenerationType.AUTO;
 import static java.time.LocalDateTime.now;
 
-@Getter
 @Setter
+@Getter
 @Entity
-@ToString
-public class ContentInfo {
+@Table(name = "agents")
+public class Agent {
     @Id
     @GeneratedValue(strategy = AUTO)
-    private Long id;
-    private String title;
-    private String body;
+    private Long agentId;
+    private String username;
+    private String password;
+    private String phoneNumber;
+    @Column(unique = true)
+    private String email;
+    private Address address;
     @Setter(AccessLevel.NONE)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)

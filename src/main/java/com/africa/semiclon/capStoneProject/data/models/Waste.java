@@ -28,6 +28,7 @@ public class Waste {
     private Long wasteId;
     private Long userId;
     private String url;
+    private Long agentId;
     @Enumerated(value = STRING)
     private Category type;
     private BigDecimal price;

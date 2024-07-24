@@ -11,9 +11,11 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 
+import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.AUTO;
 import static java.time.LocalDateTime.now;
 
@@ -32,6 +34,10 @@ public class User {
     private String password;
     @OneToOne
     private Address address;
+    private String phoneNumber;
+    @Enumerated(value = STRING)
+    @OneToMany
+    private List<Transaction> transactions;
     @Setter(AccessLevel.NONE)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
