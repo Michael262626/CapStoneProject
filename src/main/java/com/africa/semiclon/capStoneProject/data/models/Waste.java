@@ -41,6 +41,9 @@ public class Waste {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime timeUpdated;
+    @ManyToOne
+    private User uploader;
+
 
     @PrePersist
     private void setTimeCreated(){
