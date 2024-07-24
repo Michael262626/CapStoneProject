@@ -1,4 +1,9 @@
 package com.africa.semiclon.capStoneProject.services.interfaces;
 
-public interface UserService {
+
+import com.africa.semiclon.capStoneProject.dtos.request.CreateUserRequest;
+import com.africa.semiclon.capStoneProject.dtos.response.CreateUserResponse;
+
+public interface UserService  {
+    CreateUserResponse register(CreateUserRequest createUserRequest);
 }

@@ -27,6 +27,7 @@ public class Agent {
     private String phoneNumber;
     @Column(unique = true)
     private String email;
+    @OneToOne
     private Address address;
     @Setter(AccessLevel.NONE)
     @JsonSerialize(using = LocalDateTimeSerializer.class)

@@ -29,7 +29,7 @@ public class User {
     @GeneratedValue(strategy = AUTO)
     private Long id;
     private String username;
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
     private String password;
     @OneToOne
