@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 
@@ -32,6 +33,9 @@ public class User {
     private String password;
     @OneToOne
     private Address address;
+    @OneToMany
+    private List<Transaction> transactions;
+    private String phoneNumber;
     @Setter(AccessLevel.NONE)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)

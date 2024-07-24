@@ -1,5 +1,7 @@
 package com.africa.semiclon.capStoneProject.security.filters;
 
+import com.africa.semiclon.capStoneProject.security.config.RsaKeyProperties;
+import com.africa.semiclon.capStoneProject.security.services.interfaces.AuthServices;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -8,6 +10,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,45 +25,65 @@ import java.util.List;
 
 import static com.africa.semiclon.capStoneProject.security.utils.SecurityUtils.JWT_PREFIX;
 import static com.africa.semiclon.capStoneProject.security.utils.SecurityUtils.PUBLIC_ENDPOINTS;
+import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Component
+@AllArgsConstructor
+@Slf4j
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
+    private final RsaKeyProperties rsaKeys;
+    private final AuthServices authService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
-
-        String requestPath = request.getServletPath();
+                                    FilterChain filterChain) throws ServletException, IOException {
+        log.info("Starting authorization");
+        String requestPath = request.getRequestURI();
         boolean isRequestPathPublic = PUBLIC_ENDPOINTS.contains(requestPath);
-        if (isRequestPathPublic) filterChain.doFilter(request, response);
+        if (isRequestPathPublic) {
+            log.info("Authorization not needed for public endpoint: {}", requestPath);
+            filterChain.doFilter(request, response);
+            return;
+        }
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-
-        if (authorizationHeader != null) doAuthorization(authorizationHeader);
-
+        if (authorizationHeader != null) {
+            String token = authorizationHeader.substring(JWT_PREFIX.length()).strip();
+            if (isTokenBlacklisted(response, token)) return;
+            doAuthorization(token);
+        }
         filterChain.doFilter(request, response);
     }
 
-    private static void doAuthorization(String authorizationHeader) {
-        System.out.println("header: " + authorizationHeader);
-        String token = authorizationHeader.substring(JWT_PREFIX.length()).strip();
-        System.out.println("token: "+token);
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC512("secret".getBytes()))
-                .withIssuer("waste_app")
+    private boolean isTokenBlacklisted(HttpServletResponse response, String token) throws IOException {
+        if (authService.isTokenBlacklisted(token)) {
+            log.warn("Token is blacklisted: {}", token);
+            response.sendError(SC_UNAUTHORIZED, "Unauthorized");
+            response.setContentType(APPLICATION_JSON_VALUE);
+            response.getWriter().write("{\"error\": \"Token is expired or invalid\"}");
+            response.getWriter().flush();
+            return true;
+        }
+        return false;
+    }
+
+    private void doAuthorization(String token) {
+        Algorithm algorithm = Algorithm.RSA512(rsaKeys.publicKey(), rsaKeys.privateKey());
+        JWTVerifier jwtVerifier = JWT.require(algorithm)
+                .withIssuer("jwt-project")
                 .withClaimPresence("roles")
                 .withClaimPresence("principal")
                 .withClaimPresence("credentials")
                 .build();
-        DecodedJWT decodedJWT = verifier.verify(token);
-        List<? extends GrantedAuthority> authorities = decodedJWT
-                .getClaim("roles")
+        DecodedJWT decodedJWT = jwtVerifier.verify(token);
+        List<? extends GrantedAuthority> authorities = decodedJWT.getClaim("roles")
                 .asList(SimpleGrantedAuthority.class);
         String principal = decodedJWT.getClaim("principal").asString();
         String credentials = decodedJWT.getClaim("credentials").asString();
-        Authentication authentication =
-                new UsernamePasswordAuthenticationToken(principal, credentials, authorities);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, credentials, authorities);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        log.info("User authorization succeeded");
     }
-
 }

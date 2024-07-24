@@ -1,18 +1,20 @@
 package com.africa.semiclon.capStoneProject.security.filters;
 
 import com.africa.semiclon.capStoneProject.dtos.request.LoginRequest;
-import com.africa.semiclon.capStoneProject.dtos.response.BaseResponse;
+import com.africa.semiclon.capStoneProject.dtos.response.ApiResponse;
+import com.africa.semiclon.capStoneProject.dtos.response.ErrorResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.LoginResponse;
+import com.africa.semiclon.capStoneProject.security.config.RsaKeyProperties;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
+import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -22,67 +24,79 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Instant;
 import java.util.Collection;
 
-import static java.time.Instant.now;
+import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static java.time.LocalDateTime.now;
 import static java.time.temporal.ChronoUnit.HOURS;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @AllArgsConstructor
+@Slf4j
 public class CustomUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
+    private final ObjectMapper mapper = new ObjectMapper();
+
     private final AuthenticationManager authenticationManager;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final RsaKeyProperties rsaKeys;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
-                                                HttpServletResponse response) throws AuthenticationException {
+                                                HttpServletResponse response)
+            throws AuthenticationException {
+        log.info("Starting user authentication");
+        LoginRequest loginRequest;
         try {
-            InputStream requestBodyStream = request.getInputStream();
-            LoginRequest loginRequest = objectMapper.readValue(requestBodyStream, LoginRequest.class);
-            String username = loginRequest.getUsername();
-            String password = loginRequest.getPassword();
-            Authentication authentication =
-                    new UsernamePasswordAuthenticationToken(username, password);
-            Authentication authenticationResult =
-                    authenticationManager.authenticate(authentication);
-            SecurityContextHolder.getContext().setAuthentication(authenticationResult);
-            return authenticationResult;
+            InputStream inputStream = request.getInputStream();
+            loginRequest = mapper.readValue(inputStream, LoginRequest.class);
         } catch (IOException e) {
-            throw new BadCredentialsException(e.getMessage());
+            throw new AuthenticationCredentialsNotFoundException(e.getMessage());
         }
+        String username = loginRequest.getUsername().toLowerCase();
+        String password = loginRequest.getPassword();
+        Authentication authentication = new UsernamePasswordAuthenticationToken(username, password);
+        Authentication authResult = authenticationManager.authenticate(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authResult);
+        log.info("Retrieved the authentication result from authentication manager");
+        return  authResult;
     }
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
                                             HttpServletResponse response,
-                                            FilterChain chain,
-                                            Authentication authResult) throws IOException, ServletException {
+                                            FilterChain chain, Authentication authResult)
+            throws IOException, ServletException {
+
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(generateAccessToken(authResult));
-        loginResponse.setMessage("Successful authentication");
-        BaseResponse<LoginResponse> baseResponse = new BaseResponse<>();
-        baseResponse.setCode(OK.value());
-        baseResponse.setSuccess(true);
-        baseResponse.setData(loginResponse);
-        response.getOutputStream().write(objectMapper.writeValueAsBytes(baseResponse));
+        loginResponse.setMessage("Authentication succeeded");
+        ApiResponse<LoginResponse> apiResponse =
+                new ApiResponse<>(now(), true, loginResponse);
+        response.setContentType(APPLICATION_JSON_VALUE);
+        response.getOutputStream().write(mapper.writeValueAsBytes(apiResponse));
         response.flushBuffer();
+        log.info("User authentication successful");
         chain.doFilter(request, response);
     }
 
-    private static String generateAccessToken(Authentication authResult) {
+    private String generateAccessToken(Authentication authResult) {
+        Algorithm algorithm = Algorithm.RSA512(rsaKeys.publicKey(), rsaKeys.privateKey());
+        Instant now = Instant.now();
         return JWT.create()
-                .withIssuer("waste_app")
+                .withIssuer("jwt-project")
+                .withIssuedAt(now)
+                .withExpiresAt(now.plus(1, HOURS))
+                .withSubject(authResult.getPrincipal().toString())
                 .withClaim("principal", authResult.getPrincipal().toString())
                 .withClaim("credentials", authResult.getCredentials().toString())
                 .withArrayClaim("roles", extractAuthorities(authResult.getAuthorities()))
-                .withExpiresAt(now().plus(1, HOURS))
-                .sign(Algorithm.HMAC512("secret"));
+                .sign(algorithm);
     }
 
-    private static String[] extractAuthorities(Collection<? extends GrantedAuthority> authorities) {
-        return authorities.stream()
+    private String[] extractAuthorities(Collection<? extends GrantedAuthority> authorities) {
+        return authorities
+                .stream()
                 .map(GrantedAuthority::getAuthority)
                 .toArray(String[]::new);
     }
@@ -90,16 +104,20 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request,
                                               HttpServletResponse response,
-                                              AuthenticationException exception) throws IOException, ServletException {
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setMessage(exception.getMessage());
-        BaseResponse<LoginResponse> baseResponse = new BaseResponse<>();
-        baseResponse.setData(loginResponse);
-        baseResponse.setCode(UNAUTHORIZED.value());
-        baseResponse.setSuccess(false);
-        response.setStatus(UNAUTHORIZED.value());
-        response.getOutputStream()
-                .write(objectMapper.writeValueAsBytes(baseResponse));
+                                              AuthenticationException exception)
+            throws IOException, ServletException {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .requestTime(now())
+                .success(false)
+                .error("UnsuccessfulAuthentication")
+                .message(exception.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        response.sendError(SC_UNAUTHORIZED, "Unauthorized");
+        response.setContentType(APPLICATION_JSON_VALUE);
+        response.getOutputStream().write(mapper.writeValueAsBytes(errorResponse));
         response.flushBuffer();
+        log.info("User authentication unsuccessful");
     }
+
 }
