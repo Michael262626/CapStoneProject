@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class SecuredUser implements UserDetails {
     private final User user;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return user.getAuthorities()
@@ -20,16 +21,16 @@ public class SecuredUser implements UserDetails {
                 .map(authority -> new SimpleGrantedAuthority(authority.name()))
                 .toList();
 
-}
+    }
 
     @Override
     public String getPassword() {
-        return "";
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return "";
+        return user.getUsername();
     }
 
     @Override
@@ -37,18 +38,19 @@ public class SecuredUser implements UserDetails {
         return UserDetails.super.isAccountNonExpired();
     }
 
+
     @Override
     public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return true;
     }
 }
