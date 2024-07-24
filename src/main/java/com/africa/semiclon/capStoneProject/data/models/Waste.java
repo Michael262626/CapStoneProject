@@ -1,4 +1,4 @@
-package com.africa.semiclon.capStoneProject.models;
+package com.africa.semiclon.capStoneProject.data.models;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -26,6 +26,7 @@ public class Waste {
     @GeneratedValue(strategy = AUTO)
     private Long wasteId;
     private Long userId;
+    private String url;
     @Enumerated(value = STRING)
     private Category type;
     private BigDecimal price;

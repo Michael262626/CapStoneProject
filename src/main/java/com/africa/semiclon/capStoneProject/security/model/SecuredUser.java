@@ -1,14 +1,12 @@
 package com.africa.semiclon.capStoneProject.security.model;
 
-import com.africa.semiclon.capStoneProject.models.User;
+import com.africa.semiclon.capStoneProject.data.models.User;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.List;
 
 @AllArgsConstructor
 public class SecuredUser implements UserDetails {

@@ -1,4 +1,4 @@
-package com.africa.semiclon.capStoneProject.models;
+package com.africa.semiclon.capStoneProject.data.models;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -10,25 +10,21 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static jakarta.persistence.GenerationType.AUTO;
 import static java.time.LocalDateTime.now;
 
-@Setter
 @Getter
+@Setter
 @Entity
 @ToString
-@Table(name = "transactions")
-public class Transaction {
+public class ContentInfo {
     @Id
     @GeneratedValue(strategy = AUTO)
-    private Long transactionId;
-    private Long wasteId;
-    private Long userId;
-    private Long adminId;
-    private BigDecimal price;
+    private Long id;
+    private String title;
+    private String body;
     @Setter(AccessLevel.NONE)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
