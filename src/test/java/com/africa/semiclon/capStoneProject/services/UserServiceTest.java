@@ -29,12 +29,6 @@ public class UserServiceTest {
 
     }
 
-    @Test
-    void loginUserTest(){
-        LoginUserRequest loginUserRequest = new LoginUserRequest();
-        loginUserRequest.setPhoneNumber("08163933470");
-        loginUserRequest.setPassword("password");
 
-    }
 
 }
