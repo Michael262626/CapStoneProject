@@ -6,6 +6,7 @@ import com.africa.semiclon.capStoneProject.data.repository.UserRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.CreateUserRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.CreateUserResponse;
 import com.africa.semiclon.capStoneProject.exception.UserNotFoundException;
+import com.africa.semiclon.capStoneProject.exception.UsernameExistsException;
 import com.africa.semiclon.capStoneProject.services.interfaces.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,14 +17,6 @@ import java.util.HashSet;
 @Service
 public class UserServiceImpl implements UserService {
 
-
-    @Override
-    public User getById(long id) {
-        return userRepository.findById(id).
-                orElseThrow(() -> new UserNotFoundException(
-                        String.format("user with id %d not found", id)));
-
-    }
 
 
         private final UserRepository userRepository;
@@ -37,6 +30,9 @@ public class UserServiceImpl implements UserService {
         }
         @Override
         public CreateUserResponse register (CreateUserRequest createUserRequest){
+            if (userRepository.existsByEmail(createUserRequest.getEmail())) {
+                throw new UsernameExistsException("Username already exists: " + createUserRequest.getEmail());
+            }
             User newUser = modelMapper.map(createUserRequest, User.class);
             newUser.setPassword(passwordEncoder.encode(createUserRequest.getPassword()));
 
@@ -48,5 +44,13 @@ public class UserServiceImpl implements UserService {
             response.setMessage("user registered successfully");
             return response;
         }
+
+    @Override
+    public User getById(long id) {
+        return userRepository.findById(id).
+                orElseThrow(() -> new UserNotFoundException(
+                        String.format("user with id %d not found", id)));
+
+    }
     }
 
