@@ -1,5 +1,6 @@
 package com.africa.semiclon.capStoneProject.utils;
 
+import com.africa.semiclon.capStoneProject.data.models.Address;
 import com.africa.semiclon.capStoneProject.dtos.request.RegisterRequest;
 
 import static com.africa.semiclon.capStoneProject.data.models.Authority.USER;
@@ -16,6 +17,7 @@ public class TestUtils {
     public static RegisterRequest buildRegisterRequest() {
         RegisterRequest request = new RegisterRequest();
         request.setUsername("username");
+        request.setPhoneNumber("0070000");
         request.setPassword("password");
         request.setRole(USER);
         return request;

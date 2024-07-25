@@ -40,6 +40,4 @@ class AuthServiceTest {
         assertThat(response).isNotNull();
         assertThrows(UsernameExistsException.class, ()-> authService.register(request));
     }
-
-
 }

@@ -33,7 +33,7 @@ public class User {
     private String password;
     @OneToOne
     private Address address;
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Transaction> transactions;
     private String phoneNumber;
     @Setter(AccessLevel.NONE)
@@ -44,7 +44,7 @@ public class User {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime timeUpdated;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private Set<Authority> authorities;
 
