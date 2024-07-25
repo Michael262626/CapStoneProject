@@ -1,6 +1,7 @@
 package com.africa.semiclon.capStoneProject.services;
 
 import com.africa.semiclon.capStoneProject.dtos.request.CreateUserRequest;
+import com.africa.semiclon.capStoneProject.dtos.request.LoginUserRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.CreateUserResponse;
 import com.africa.semiclon.capStoneProject.services.interfaces.UserService;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,7 @@ public class UserServiceTest {
     private UserService userService;
 
     @Test
-    void registerTest(){
+    void registerUserTest(){
         CreateUserRequest createUserRequest = new CreateUserRequest();
         createUserRequest.setEmail("test12@gmail.com");
         createUserRequest.setPassword("password");
@@ -28,5 +29,12 @@ public class UserServiceTest {
 
     }
 
+    @Test
+    void loginUserTest(){
+        LoginUserRequest loginUserRequest = new LoginUserRequest();
+        loginUserRequest.setPhoneNumber("08163933470");
+        loginUserRequest.setPassword("password");
+
+    }
 
 }
