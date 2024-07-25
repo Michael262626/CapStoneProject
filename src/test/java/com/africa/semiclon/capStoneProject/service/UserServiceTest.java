@@ -1,7 +1,6 @@
-package com.africa.semiclon.capStoneProject.services;
+package com.africa.semiclon.capStoneProject.service;
 
 import com.africa.semiclon.capStoneProject.dtos.request.CreateUserRequest;
-import com.africa.semiclon.capStoneProject.dtos.request.LoginUserRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.CreateUserResponse;
 import com.africa.semiclon.capStoneProject.services.interfaces.UserService;
 import org.junit.jupiter.api.Test;
