@@ -31,7 +31,6 @@ public class WasteServiceImpl implements WasteService {
         User user= userService.getById(request.getUserId());
 
         try{
-
             Uploader uploader = cloudinary.uploader();
             Map<?,?> response = uploader.upload(request.getMediaFile().getBytes(), ObjectUtils.asMap("resource_type", "auto"));
             log.info("cloudinary upload response:: {}", response);
