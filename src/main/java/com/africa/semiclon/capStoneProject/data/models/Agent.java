@@ -24,9 +24,12 @@ public class Agent {
     private Long agentId;
     private String username;
     private String password;
+    private String verificationToken;
+    private Boolean verified;
     private String phoneNumber;
     @Column(unique = true)
     private String email;
+    @OneToOne
     private Address address;
     @Setter(AccessLevel.NONE)
     @JsonSerialize(using = LocalDateTimeSerializer.class)

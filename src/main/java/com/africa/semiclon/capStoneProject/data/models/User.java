@@ -29,6 +29,8 @@ public class User {
     @GeneratedValue(strategy = AUTO)
     private Long id;
     private String username;
+    private String verificationToken;
+    private Boolean verified;
     @Column(unique = true)
     private String email;
     private String password;
