@@ -28,6 +28,7 @@ public class Waste {
     private Long wasteId;
     private Long userId;
     private String url;
+    private Long agentId;
     @Enumerated(value = STRING)
     private Category type;
     private BigDecimal price;
@@ -40,6 +41,9 @@ public class Waste {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime timeUpdated;
+    @ManyToOne
+    private User uploader;
+
 
     @PrePersist
     private void setTimeCreated(){

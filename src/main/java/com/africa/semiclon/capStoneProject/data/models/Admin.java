@@ -25,7 +25,7 @@ public class Admin {
     @Id
     @GeneratedValue(strategy = AUTO)
     private Long adminId;
-    private String adminName;
+    private String username;
     @Column(unique = true)
     private String adminEmail;
     private String adminPassword;
