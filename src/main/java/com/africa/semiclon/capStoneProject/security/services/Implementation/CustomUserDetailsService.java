@@ -1,4 +1,4 @@
-package com.africa.semiclon.capStoneProject.security.services;
+package com.africa.semiclon.capStoneProject.security.services.Implementation;
 
 import com.africa.semiclon.capStoneProject.data.models.User;
 import com.africa.semiclon.capStoneProject.data.repository.UserRepository;
