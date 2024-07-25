@@ -12,7 +12,7 @@ import java.util.Map;
 public class CloudConfig {
     @Value("${cloud.api.name}")
     private String cloudName;
-    @Value("${cloud.api.key}")
+    @Value("${cloud.api.key}1")
     private String cloudApiKey;
     @Value("${cloud.api.secret}")
     private String cloudSecret;

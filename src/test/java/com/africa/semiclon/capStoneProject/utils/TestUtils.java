@@ -1,9 +1,15 @@
 package com.africa.semiclon.capStoneProject.utils;
 
-import com.africa.semiclon.capStoneProject.data.models.Address;
 import com.africa.semiclon.capStoneProject.dtos.request.RegisterRequest;
+import com.africa.semiclon.capStoneProject.dtos.request.UploadWasteRequest;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import static com.africa.semiclon.capStoneProject.data.models.Authority.USER;
+import static com.africa.semiclon.capStoneProject.data.models.Category.PLASTIC;
 
 public class TestUtils {
     public static final String BLACKLISTED_TOKEN = "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJqd3QtcHJvamVjd" +
@@ -22,4 +28,13 @@ public class TestUtils {
         request.setRole(USER);
         return request;
     }
+    public static UploadWasteRequest buildUploadWasteRequest(InputStream inputStream) throws IOException, IOException {
+        UploadWasteRequest request = new UploadWasteRequest();
+        MultipartFile file = new MockMultipartFile("waste", inputStream);
+        request.setMediaFile(file);
+        request.setCategory(PLASTIC);
+        request.setUserId(10L);
+        return request;
+    }
+
 }
