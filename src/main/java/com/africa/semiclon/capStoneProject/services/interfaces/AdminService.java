@@ -4,4 +4,5 @@ import com.africa.semiclon.capStoneProject.data.models.Notification;
 
 public interface AdminService {
 
+
 }

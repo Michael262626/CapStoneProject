@@ -4,14 +4,8 @@ import com.africa.semiclon.capStoneProject.dtos.request.CreatePlanRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.InitializePaymentRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.CreatePlanResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.InitializePaymentResponse;
-import com.africa.semiclon.capStoneProject.dtos.response.PaymentVerificationResponse;
 
-public interface TransactionService {
-    CreatePlanResponse createPlanResponse(CreatePlanRequest createPlanRequest) throws RuntimeException;
-    PaymentVerificationResponse paymentVerificationResponse(String reference, String plan, Long id) throws RuntimeException;
-
+public interface PaystackService {
+    CreatePlanResponse createPlanResponse(CreatePlanRequest createPlanRequest);
     InitializePaymentResponse initializePaymentResponse(InitializePaymentRequest initializePaymentRequest);
-
-    PaymentVerificationResponse paymentVerificationResponse(String reference, String plan, Long id, Object buyer) throws RuntimeException;
-
 }
