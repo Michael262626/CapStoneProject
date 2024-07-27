@@ -43,10 +43,6 @@ public class Waste {
     private LocalDateTime timeUpdated;
     @ManyToOne
     private User uploader;
-//    @ManyToOne
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private User user;
-
     @PrePersist
     private void setTimeCreated(){
         this.timeCreated= now();
