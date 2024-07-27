@@ -9,7 +9,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -33,6 +32,7 @@ public class Waste {
     private Category type;
     private BigDecimal price;
     private String quantity;
+    private BigDecimal weight;
     @Setter(AccessLevel.NONE)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -43,7 +43,9 @@ public class Waste {
     private LocalDateTime timeUpdated;
     @ManyToOne
     private User uploader;
-
+//    @ManyToOne
+//    @JoinColumn(name = "user_id", nullable = false)
+//    private User user;
 
     @PrePersist
     private void setTimeCreated(){

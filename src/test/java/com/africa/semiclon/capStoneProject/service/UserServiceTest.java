@@ -1,8 +1,13 @@
 package com.africa.semiclon.capStoneProject.service;
 
+import com.africa.semiclon.capStoneProject.data.models.Category;
+import com.africa.semiclon.capStoneProject.data.models.User;
+import com.africa.semiclon.capStoneProject.data.repository.UserRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.CreateUserRequest;
+import com.africa.semiclon.capStoneProject.dtos.request.SellWasteRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.UpdateUserRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.CreateUserResponse;
+import com.africa.semiclon.capStoneProject.dtos.response.SellWasteResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.UpdateUserResponse;
 import com.africa.semiclon.capStoneProject.exception.UserNotFoundException;
 import com.africa.semiclon.capStoneProject.exception.UsernameExistsException;
@@ -13,6 +18,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+
+import java.math.BigDecimal;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -22,6 +30,9 @@ public class UserServiceTest {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private CreateUserResponse createUserResponse;
 
@@ -81,6 +92,33 @@ public class UserServiceTest {
         updateUserRequest.setPhoneNumber("08063933470");
         updateUserRequest.setUsername("updatedTest");
         assertThrows(UserNotFoundException.class, () -> userService.updateProfile(updateUserRequest));
+    }
+
+    @Test
+    void testThatUserCanSellWaste() {
+        assertNotNull(createUserResponse);
+        assertTrue(createUserResponse.getMessage().contains("success"));
+        Long userId = createUserResponse.getUserId();
+        SellWasteResponse sellWasteResponse = sellWasteDetails(userId);
+        assertNotNull(sellWasteResponse);
+        assertTrue(sellWasteResponse.getMessage().contains("success"));
+        assertionForEmptyWaste(userId);
+    }
+
+    private SellWasteResponse sellWasteDetails(Long userId) {
+        SellWasteRequest sellWasteRequest = new SellWasteRequest();
+        sellWasteRequest.setUserId(userId);
+        sellWasteRequest.setType(Category.PLASTIC);
+        sellWasteRequest.setQuantity("5");
+        sellWasteRequest.setWasteWeight(10);
+        return userService.sellWaste(sellWasteRequest);
+    }
+
+    private void assertionForEmptyWaste(Long userId) {
+        User updatedUser = userRepository.findById(userId).orElse(null);
+        assertNotNull(updatedUser);
+        assertEquals(new BigDecimal("10.00"), updatedUser.getTotalWaste());
+        assertFalse(updatedUser.getWastes().isEmpty());
     }
 
 }
