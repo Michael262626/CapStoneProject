@@ -16,4 +16,6 @@ public interface AdminService {
 
     NotificationResponse sendNotificationRequest(NotificationRequest notificationRequest);
 
+    DeleteUserResponse deleteUser(DeleteUserRequest deleteRequest);
+
 }

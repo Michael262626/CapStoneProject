@@ -7,7 +7,6 @@ import com.africa.semiclon.capStoneProject.data.repository.WasteRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.*;
 import com.africa.semiclon.capStoneProject.dtos.response.*;
 import com.africa.semiclon.capStoneProject.services.interfaces.AdminService;
-import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,6 +139,23 @@ public class AdminTest {
         assertThat(response.getMessage()).isEqualTo("Notification sent successfully");
 
 
+    }
+
+    @Test
+    public void testAdminCanDeleteUser(){
+        User user = new User();
+        user.setUsername("testUser");
+        user.setEmail("testuser@example.com");
+        user.setPassword("password123");
+        userRepository.save(user);
+        User savedUser = userRepository.findById(user.getId()).orElse(null);
+        assertThat(savedUser).isNotNull();
+        DeleteUserRequest deleteRequest = new DeleteUserRequest();
+        deleteRequest.setUserId(user.getId());
+
+        adminService.deleteUser(deleteRequest);
+        User deletedUser = userRepository.findById(user.getId()).orElse(null);
+        assertThat(deletedUser).isNull();
     }
 
 

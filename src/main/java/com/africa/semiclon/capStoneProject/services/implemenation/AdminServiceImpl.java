@@ -101,6 +101,19 @@ public class AdminServiceImpl implements AdminService {
 
     }
 
+    @Override
+    public DeleteUserResponse deleteUser(DeleteUserRequest deleteRequest) {
+        DeleteUserResponse response = new DeleteUserResponse();
+
+        if (userRepository.existsById(deleteRequest.getUserId())) {
+            userRepository.deleteById(deleteRequest.getUserId());
+            response.setMessage("User deleted successfully");
+        } else {
+            response.setMessage("User not found");
+        }
+
+        return response;
+    }
 
 }
 
