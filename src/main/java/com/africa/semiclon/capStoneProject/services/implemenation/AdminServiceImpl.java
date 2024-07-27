@@ -30,4 +30,5 @@ public class AdminServiceImpl implements AdminService {
         adminRepository.save(adminToBeRegistered);
         return modelMapper.map(adminToBeRegistered, RegisterResponse.class);
     }
+
 }

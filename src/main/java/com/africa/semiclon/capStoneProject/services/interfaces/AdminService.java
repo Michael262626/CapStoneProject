@@ -6,4 +6,5 @@ import com.africa.semiclon.capStoneProject.dtos.response.RegisterResponse;
 public interface AdminService {
     RegisterResponse registerAdmin(RegisterRequest registerRequest);
 
+
 }

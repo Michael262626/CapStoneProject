@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -26,11 +27,12 @@ import static java.time.LocalDateTime.now;
 public class User {
     @Id
     @GeneratedValue(strategy = AUTO)
-    private Long id;
+    private Long userId;
     private String username;
     @Column(unique = true)
     private String email;
     private String password;
+    private BigDecimal balance;
     @OneToOne
     private Address address;
     @OneToMany(fetch = FetchType.EAGER)
