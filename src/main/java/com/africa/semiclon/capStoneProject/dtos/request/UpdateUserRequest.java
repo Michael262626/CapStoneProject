@@ -10,7 +10,4 @@ public class UpdateUserRequest {
     private String username;
     private String phoneNumber;
     private String email;
-    private String password;
-
-
 }
