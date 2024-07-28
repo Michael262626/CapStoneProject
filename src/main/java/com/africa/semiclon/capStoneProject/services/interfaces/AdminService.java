@@ -18,4 +18,8 @@ public interface AdminService {
 
     DeleteUserResponse deleteUser(DeleteUserRequest deleteRequest);
 
+    RegisterAgentResponse registerAgent(RegisterAgentRequest registerRequest);
+
+    RegisterWasteResponse registerWasteForSale(RegisterWasteRequest registerWasteRequest);
+
 }

@@ -12,6 +12,8 @@ import com.africa.semiclon.capStoneProject.dtos.response.*;
 import com.africa.semiclon.capStoneProject.exception.AgentNotFoundException;
 import com.africa.semiclon.capStoneProject.exception.WasteNotFoundException;
 import com.africa.semiclon.capStoneProject.services.interfaces.AdminService;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,15 +25,18 @@ public class AdminServiceImpl implements AdminService {
     private final WasteRepository wasteRepository;
     private final AgentRepository agentRepository;
     private final EmailService emailService;
+    private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
 
 
-    public AdminServiceImpl(UserRepository userRepository, WasteRepository wasteRepository, AgentRepository agentRepository,  EmailService emailService) {
+    public AdminServiceImpl(UserRepository userRepository, WasteRepository wasteRepository, AgentRepository agentRepository, EmailService emailService, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
 
         this.wasteRepository = wasteRepository;
         this.agentRepository = agentRepository;
         this.emailService = emailService;
-
+        this.modelMapper = modelMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -111,6 +116,31 @@ public class AdminServiceImpl implements AdminService {
         } else {
             response.setMessage("User not found");
         }
+
+        return response;
+    }
+
+    @Override
+    public RegisterAgentResponse registerAgent(RegisterAgentRequest registerRequest) {
+        Agent agent = modelMapper.map(registerRequest, Agent.class);
+        agent.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        agentRepository.save(agent);
+        RegisterAgentResponse response = modelMapper.map(agent, RegisterAgentResponse.class);
+        response.setMessage("Agent registered successfully");
+        response.setAgentId(agent.getAgentId());
+        return response;
+
+    }
+
+    @Override
+    public RegisterWasteResponse registerWasteForSale(RegisterWasteRequest registerWasteRequest) {
+        Agent agent = agentRepository.findById(registerWasteRequest.getAgentId()).orElseThrow(() -> new AgentNotFoundException("Agent not found"));
+        Waste waste = modelMapper.map(registerWasteRequest, Waste.class);
+        waste.setAgent(agent);
+        wasteRepository.save(waste);
+        RegisterWasteResponse response = modelMapper.map(waste, RegisterWasteResponse.class);
+        response.setMessage("Waste registered successfully for sale");
+        response.setWasteId(waste.getWasteId());
 
         return response;
     }

@@ -158,5 +158,45 @@ public class AdminTest {
         assertThat(deletedUser).isNull();
     }
 
+    @Test
+    public void testAdminCanRegisterAnAgent(){
+        RegisterAgentRequest registerRequest = new RegisterAgentRequest();
+        registerRequest.setUsername("agent001");
+        registerRequest.setEmail("agent001@example.com");
+        registerRequest.setPassword("password123");
+        registerRequest.setFirstName("AgentOne");
+        registerRequest.setPhoneNumber("08034589034");
+        RegisterAgentResponse response = adminService.registerAgent(registerRequest);
+        assertThat(response).isNotNull();
+        assertThat(response.getMessage()).isEqualTo("Agent registered successfully");
+        assertThat(response.getAgentId()).isNotNull();
+        Agent savedAgent = agentRepository.findById(response.getAgentId()).orElse(null);
+        assertThat(savedAgent).isNotNull();
+        assertThat(savedAgent.getUsername()).isEqualTo("agent001");
+        assertThat(savedAgent.getEmail()).isEqualTo("agent001@example.com");
+
+    }
+
+    @Test
+    public void AdminCanRegisterWasteForSale(){
+        RegisterWasteRequest registerWasteRequest = new RegisterWasteRequest();
+        registerWasteRequest.setType(Category.PLASTIC);
+        registerWasteRequest.setQuantity("9kg");
+        registerWasteRequest.setPrice(BigDecimal.valueOf(200.00));
+        registerWasteRequest.setDescription("High-quality recycled plastic");
+        registerWasteRequest.setAgentId(2L);
+        RegisterWasteResponse response = adminService.registerWasteForSale(registerWasteRequest);
+        assertThat(response).isNotNull();
+        assertThat(response.getMessage()).isEqualTo("Waste registered successfully for sale");
+        assertThat(response.getWasteId()).isNotNull();
+        Waste savedWaste = wasteRepository.findById(response.getWasteId()).orElse(null);
+        assertThat(savedWaste).isNotNull();
+        assertThat(savedWaste.getType()).isEqualTo(Category.PLASTIC);
+        assertThat(savedWaste.getQuantity()).isEqualTo("9kg");
+        assertThat(savedWaste.getPrice()).isEqualTo(BigDecimal.valueOf(200.00).setScale(2));
+        assertThat(savedWaste.getDescription()).isEqualTo("High-quality recycled plastic");
+        assertThat(savedWaste.getAgent().getAgentId()).isEqualTo(2L);
+    }
+
 
 }

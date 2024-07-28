@@ -49,6 +49,7 @@ public class Waste {
     private User uploader;
     @OneToOne
     private Agent agent;
+    private String description;
 
     @PrePersist
     private void setTimeCreated(){
