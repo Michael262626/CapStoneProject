@@ -1,6 +1,7 @@
 package com.africa.semiclon.capStoneProject.services.implemenation;
 
 import com.africa.semiclon.capStoneProject.data.models.Agent;
+import com.africa.semiclon.capStoneProject.data.models.Authority;
 import com.africa.semiclon.capStoneProject.data.models.User;
 import com.africa.semiclon.capStoneProject.data.repository.AgentRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.RegisterAgentRequest;
@@ -10,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.HashSet;
 import java.util.UUID;
 
 public class AgentServiceImplementation implements AgentService {
@@ -32,6 +34,9 @@ public class AgentServiceImplementation implements AgentService {
     public RegisterAgentResponse createAccount(RegisterAgentRequest request) {
         String verificationToken = UUID.randomUUID().toString();
         Agent agent = modelMapper.map(request,Agent.class);
+        agent.setAuthorities(new HashSet<>());
+        var authorities = agent.getAuthorities();
+        authorities.add(Authority.USER);
         agent.setVerificationToken(verificationToken);
         agent.setPassword(passwordEncoder.encode(request.getPassword()));
         agent.setVerified(false);

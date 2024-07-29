@@ -2,13 +2,19 @@ package com.africa.semiclon.capStoneProject.service;
 
 import com.africa.semiclon.capStoneProject.data.models.Address;
 import com.africa.semiclon.capStoneProject.dtos.request.RegisterAgentRequest;
-import lombok.extern.slf4j.Slf4j;
+import com.africa.semiclon.capStoneProject.dtos.response.RegisterAgentResponse;
+import com.africa.semiclon.capStoneProject.services.interfaces.AgentService;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
 public class AgentServiceImplementationTest {
-    private Address address;
+
+    @Autowired
+    private AgentService agentService;
 
     @Test
     public void testThatAgentCanCreateAccount(){
@@ -17,6 +23,18 @@ public class AgentServiceImplementationTest {
         registerAgentRequest.setPassword("oluwakemisola098");
         registerAgentRequest.setUsername("dark_royal");
         registerAgentRequest.setPhoneNumber("09028979349");
-        registerAgentRequest.setAddress();
+        Address address = new Address();
+        address.setStreetName("sabo yaba");
+        address.setCity("lagos state");
+        address.setZipCode("12345");
+        address.setId(201L);
+        address.setPostalCode("0902897");
+        registerAgentRequest.setAddress(address);
+
+        RegisterAgentResponse response = agentService.createAccount(registerAgentRequest);
+        assertThat(response).isNotNull();
+        assertThat(response.getMessage()).contains("registered successfully");
     }
+
+
 }
