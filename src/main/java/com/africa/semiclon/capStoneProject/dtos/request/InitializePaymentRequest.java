@@ -29,6 +29,11 @@ public class InitializePaymentRequest {
     @JsonProperty("plan")
     private String plan;
 
+    @NotNull(message = "Plan cannot be null")
+    @JsonProperty("user_id")
+    private Long id;
+
+
     @NotNull(message = "Channels cannot be null")
     @JsonProperty("channels")
     private String[] channels;

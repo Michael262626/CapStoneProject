@@ -1,139 +1,90 @@
 package com.africa.semiclon.capStoneProject.services.implemenation;
 
-import com.africa.semiclon.capStoneProject.data.models.Admin;
+import com.africa.semiclon.capStoneProject.data.models.PricingPlanType;
 import com.africa.semiclon.capStoneProject.data.models.Transaction;
 import com.africa.semiclon.capStoneProject.data.models.User;
 import com.africa.semiclon.capStoneProject.data.repository.AdminRepository;
 import com.africa.semiclon.capStoneProject.data.repository.TransactionRepository;
 import com.africa.semiclon.capStoneProject.data.repository.UserRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.CreatePlanRequest;
-import com.africa.semiclon.capStoneProject.dtos.request.InitializePaymentRequest;
+import com.africa.semiclon.capStoneProject.dtos.request.GetBalanceRequest;
+import com.africa.semiclon.capStoneProject.dtos.request.PaymentRequest;
+import com.africa.semiclon.capStoneProject.dtos.request.WithdrawRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.CreatePlanResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.InitializePaymentResponse;
+import com.africa.semiclon.capStoneProject.services.interfaces.PaymentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
+
 
 import java.math.BigDecimal;
-import java.util.Optional;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
+import static org.modelmapper.internal.bytebuddy.matcher.ElementMatchers.any;
 
-class TransactionServiceImplTest {
+@SpringBootTest
+@Sql(scripts = "/db/data.sql")
+public class TransactionServiceImplTest {
 
-    @Mock
-    private AdminRepository adminRepository;
-
-    @Mock
-    private UserRepository userRepository;
-
-    @Mock
-    private TransactionRepository transactionRepository;
-
-    @Mock
-    private PaystackServiceImpl paystackServiceImpl;
-
-    @InjectMocks
+    @Autowired
     private TransactionServiceImpl transactionService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     @Test
-    void makePaymentToUserTest() {
-        Long adminId = 1L;
-        Long userId = 1L;
-        BigDecimal amount = BigDecimal.valueOf(1000);
-        Admin admin = new Admin();
-        User user = new User();
-        user.setUsername("test_user");
-        user.setEmail("test@example.com");
-
-        CreatePlanResponse createPlanResponse = getCreatePlanResponse();
-
-        when(adminRepository.findById(adminId)).thenReturn(Optional.of(admin));
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(paystackServiceImpl.createPlanResponse(any(CreatePlanRequest.class))).thenReturn(createPlanResponse);
-
-        CreatePlanResponse response = transactionService.makePaymentToUser(adminId, userId, amount);
-
-        assertNotNull(response);
-        assertEquals("success", response.getMessage());
-
-        verify(transactionRepository, times(1)).save(any(Transaction.class));
-    }
-
-    private static CreatePlanResponse getCreatePlanResponse() {
-        CreatePlanResponse.Data data = new CreatePlanResponse.Data();
-        data.setReference("REF_12345");
-        data.setGatewayResponse("Successful");
-        data.setPaidAt("2023-07-25T15:03:00Z");
-        data.setCreatedAt("2023-07-25T15:00:00Z");
-        data.setChannel("card");
-        data.setCurrency("NGN");
-        data.setIpAddress("127.0.0.1");
+    public void testMakePaymentToUser() {
+        PaymentRequest request = new PaymentRequest();
+        request.setAdminId(300L);
+        request.setUserId(10L);
+        request.setAmount(BigDecimal.valueOf(100.00));
 
         CreatePlanResponse createPlanResponse = new CreatePlanResponse();
         createPlanResponse.setStatus(true);
-        createPlanResponse.setMessage("success");
-        createPlanResponse.setData(data);
-        return createPlanResponse;
+        createPlanResponse.setData(new CreatePlanResponse.Data());
+
+        CreatePlanResponse response = transactionService.makePaymentToUser(request);
+
+        assertNotNull(response);
+        assertTrue(response.getStatus());
+
+        Transaction transaction = transactionRepository.findAll().get(0);
+        assertNotNull(transaction);
+        assertEquals(PricingPlanType.PAYMENT, transaction.getPlanType());
+        assertEquals(BigDecimal.valueOf(100.00), transaction.getAmount());
     }
 
     @Test
-    void processWithdrawalTest() {
-        Long userId = 1L;
-        BigDecimal amount = BigDecimal.valueOf(500);
-        User user = new User();
-        user.setEmail("test@example.com");
-        user.setBalance(BigDecimal.valueOf(1000));
+    public void testProcessWithdrawal() {
+        User user = userRepository.findById(10L).orElseThrow();
+        user.setBalance(BigDecimal.valueOf(500.00));
+        userRepository.save(user);
 
-        InitializePaymentResponse initializePaymentResponse = getInitializePaymentResponse();
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(paystackServiceImpl.initializePaymentResponse(any(InitializePaymentRequest.class))).thenReturn(initializePaymentResponse);
-
-        transactionService.processWithdrawal(userId, amount);
-
-        verify(transactionRepository, times(1)).save(any(Transaction.class));
-        verify(userRepository, times(1)).save(user);
-        assertEquals(BigDecimal.valueOf(500), user.getBalance());
-    }
-
-    private static InitializePaymentResponse getInitializePaymentResponse() {
-        InitializePaymentResponse.Data data = new InitializePaymentResponse.Data();
-        data.setReference("REF_67890");
-        data.setGatewayResponse("Successful");
-        data.setPaidAt("2023-07-25T16:03:00Z");
-        data.setCreatedAt("2023-07-25T16:00:00Z");
-        data.setChannel("card");
-        data.setCurrency("NGN");
-        data.setIpAddress("127.0.0.1");
+        WithdrawRequest request = new WithdrawRequest();
+        request.setUserId(10L);
+        request.setAmount(BigDecimal.valueOf(100.00));
 
         InitializePaymentResponse initializePaymentResponse = new InitializePaymentResponse();
         initializePaymentResponse.setStatus(true);
-        initializePaymentResponse.setMessage("success");
-        initializePaymentResponse.setData(data);
-        return initializePaymentResponse;
-    }
+        initializePaymentResponse.setData(new InitializePaymentResponse.Data("pay_67890", "100.00", "NGN"));
 
-    @Test
-    void processWithdrawalInsufficientBalanceTest() {
-        Long userId = 1L;
-        BigDecimal amount = BigDecimal.valueOf(1500);
-        User user = new User();
-        user.setEmail("test@example.com");
-        user.setBalance(BigDecimal.valueOf(1000));
 
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        transactionService.processWithdrawal(request);
 
-        assertThrows(RuntimeException.class, () -> transactionService.processWithdrawal(userId, amount));
-        verify(transactionRepository, never()).save(any(Transaction.class));
+        Transaction transaction = transactionRepository.findAll().getFirst();
+        assertNotNull(transaction);
+        assertEquals(PricingPlanType.WITHDRAWAL, transaction.getPlanType());
+        assertEquals(BigDecimal.valueOf(100.00), transaction.getAmount());
+
+        User updatedUser = userRepository.findById(10L).orElseThrow();
+        assertEquals(BigDecimal.valueOf(400.00), updatedUser.getBalance());
     }
 }

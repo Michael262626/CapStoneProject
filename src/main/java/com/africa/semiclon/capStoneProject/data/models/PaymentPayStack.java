@@ -1,56 +1,49 @@
 package com.africa.semiclon.capStoneProject.data.models;
 
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
+import java.util.Date;
 
-import static jakarta.persistence.GenerationType.AUTO;
 import static java.time.LocalDateTime.now;
 
-@Setter
 @Getter
-@Entity
+@Setter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-@ToString
-@Table(name = "admin")
-public class Admin {
+@NoArgsConstructor
+@Entity
+@Table(name = "payment")
+public class PaymentPayStack {
     @Id
-    @GeneratedValue(strategy = AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String username;
-    @Column(unique = true)
-    private String adminEmail;
-    private String adminPassword;
-    @OneToMany
-    private List<Transaction> transactions;
-    @Setter(AccessLevel.NONE)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private User user;
+    private String reference;
+    private BigDecimal amount;
+    private String gatewayResponse;
+    private String paidAt;
+    private String createdAt;
+    private String channel;
+    private String currency;
+    private String ipAddress;
     @Enumerated(EnumType.STRING)
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<Authority> authority;
+    private PricingPlanType pricingPlanType;
+
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime timeCreated;
-    @Setter(AccessLevel.NONE)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime timeUpdated;
 
     @PrePersist
     private void setTimeCreated(){
         this.timeCreated= now();
-    }
-    @PreUpdate
-    private void setTimeUpdated(){
-        this.timeUpdated= now();
     }
 }

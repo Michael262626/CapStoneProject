@@ -34,6 +34,7 @@ public class User {
     private String password;
     private BigDecimal balance;
     @OneToOne
+    @JoinColumn(name = "address_id")
     private Address address;
     @OneToMany(fetch = FetchType.EAGER)
     private List<Transaction> transactions;
