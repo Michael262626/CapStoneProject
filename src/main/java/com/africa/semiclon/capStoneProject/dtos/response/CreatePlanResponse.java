@@ -13,6 +13,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import static java.time.LocalDateTime.now;
 
@@ -63,21 +64,11 @@ public class CreatePlanResponse {
         @JsonProperty("id")
         private Long id;
 
-        @JsonSerialize(using = LocalDateTimeSerializer.class)
-        @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-        private LocalDateTime createdAt;
+        @JsonProperty("time")
+        private Date createdAt;
 
-        @JsonSerialize(using = LocalDateTimeSerializer.class)
-        @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-        private LocalDateTime updatedAt;
+        @JsonProperty("time")
+        private Date updatedAt;
 
-        @PrePersist
-        private void setTimeCreated(){
-            this.createdAt= now();
-        }
-        @PreUpdate
-        private void setTimeUpdated(){
-            this.updatedAt= now();
-        }
     }
 }
