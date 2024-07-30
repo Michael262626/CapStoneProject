@@ -35,6 +35,7 @@ public class User {
     private String email;
     private String password;
     @OneToOne
+    @JoinColumn(name = "address_id")
     private Address address;
     @OneToMany(fetch = FetchType.EAGER)
     private List<Transaction> transactions;

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.validation.constraints.Digits;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
@@ -14,8 +13,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 public class CreatePlanRequest {
-
-    private Long id;
 
     @NotNull(message = "Plan name cannot be null")
     @JsonProperty("name")
@@ -29,9 +26,4 @@ public class CreatePlanRequest {
     @JsonProperty("amount")
     @Digits(integer = 6, fraction = 2)
     private BigDecimal amount;
-
-    @NotNull(message = "Email cannot be null")
-    @Email(message = "Email should be valid")
-    @JsonProperty("email")
-    private String email;
 }

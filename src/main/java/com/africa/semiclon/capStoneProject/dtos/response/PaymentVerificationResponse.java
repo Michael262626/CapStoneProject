@@ -3,11 +3,19 @@ package com.africa.semiclon.capStoneProject.dtos.response;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import lombok.*;
-import org.bson.types.ObjectId;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
+
+import static java.time.LocalDateTime.now;
 
 @Getter
 @Setter
@@ -19,7 +27,7 @@ import java.util.Date;
 public class PaymentVerificationResponse {
 
     @JsonProperty("_id")
-    private ObjectId id;
+    private Long id;
 
     @JsonProperty("status")
     private String status;
@@ -39,7 +47,7 @@ public class PaymentVerificationResponse {
     public static class Data {
 
         @JsonProperty("_id")
-        private ObjectId id;
+        private Long id;
 
         @JsonProperty("status")
         private String status;
@@ -56,8 +64,9 @@ public class PaymentVerificationResponse {
         @JsonProperty("paid_at")
         private String paidAt;
 
-        @JsonProperty("created_at")
-        private Date createdAt;
+        @JsonSerialize(using = LocalDateTimeSerializer.class)
+        @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+        private LocalDateTime createdOn;
 
         @JsonProperty("channel")
         private String channel;
@@ -71,11 +80,22 @@ public class PaymentVerificationResponse {
         @JsonProperty("pricing_plan_type")
         private String pricingPlanType;
 
-        @JsonProperty("created_on")
-        private Date createdOn;
+        @JsonSerialize(using = LocalDateTimeSerializer.class)
+        @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+        private LocalDateTime createdAt;
 
-        @JsonProperty("updated_on")
-        private Date updatedOn;
+        @JsonSerialize(using = LocalDateTimeSerializer.class)
+        @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+        private LocalDateTime updatedAt;
 
+        @PrePersist
+        private void setTimeCreated() {
+            this.createdAt = now();
+        }
+
+        @PreUpdate
+        private void setTimeUpdated() {
+            this.updatedAt = now();
+        }
     }
 }

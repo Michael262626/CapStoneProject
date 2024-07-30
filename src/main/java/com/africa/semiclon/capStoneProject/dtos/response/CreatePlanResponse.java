@@ -1,9 +1,20 @@
 package com.africa.semiclon.capStoneProject.dtos.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import static java.time.LocalDateTime.now;
 
 @Getter
 @Setter
@@ -13,35 +24,60 @@ import java.math.BigDecimal;
 @ToString
 public class CreatePlanResponse {
 
-    private boolean status;
+    private Boolean status;
     private String message;
     private Data data;
 
     @Getter
     @Setter
-    @Builder
-    @NoArgsConstructor
     @AllArgsConstructor
-    @ToString
+    @NoArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Data {
+
+        @JsonProperty("name")
         private String name;
-        private String plan_code;
-        private String description;
+
+        @JsonProperty("amount")
         private BigDecimal amount;
+
+        @JsonProperty("interval")
         private String interval;
-        @JsonProperty("reference")
-        private String reference;
-        @JsonProperty("gateway_response")
-        private String gatewayResponse;
-        @JsonProperty("paid_at")
-        private String paidAt;
-        @JsonProperty("created_at")
-        private String createdAt;
-        @JsonProperty("channel")
-        private String channel;
+
+        @JsonProperty("integration")
+        private String integration;
+
+        @JsonProperty("plan_code")
+        private String planCode;
+
+        @JsonProperty("send_invoices")
+        private String sendInvoices;
+
+        @JsonProperty("send_sms")
+        private String sendSms;
+
         @JsonProperty("currency")
         private String currency;
-        @JsonProperty("ip_address")
-        private String ipAddress;
+
+        @JsonProperty("id")
+        private Long id;
+
+        @JsonSerialize(using = LocalDateTimeSerializer.class)
+        @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+        private LocalDateTime createdAt;
+
+        @JsonSerialize(using = LocalDateTimeSerializer.class)
+        @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+        private LocalDateTime updatedAt;
+
+        @PrePersist
+        private void setTimeCreated(){
+            this.createdAt= now();
+        }
+        @PreUpdate
+        private void setTimeUpdated(){
+            this.updatedAt= now();
+        }
     }
 }
