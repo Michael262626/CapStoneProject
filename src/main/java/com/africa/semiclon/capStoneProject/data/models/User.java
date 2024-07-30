@@ -10,7 +10,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -28,13 +30,16 @@ public class User {
     @GeneratedValue(strategy = AUTO)
     private Long id;
     private String username;
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
     private String password;
     @OneToOne
     private Address address;
     @OneToMany(fetch = FetchType.EAGER)
     private List<Transaction> transactions;
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<Waste> wastes = new ArrayList<>();
+    private BigDecimal totalWaste = BigDecimal.ZERO;
     private String phoneNumber;
     @Setter(AccessLevel.NONE)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
