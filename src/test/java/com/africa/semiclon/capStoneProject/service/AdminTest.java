@@ -33,6 +33,7 @@ public class AdminTest {
     @Autowired
     private WasteRepository wasteRepository;
 
+
     @BeforeEach
     public void setUp() {
         userRepository.deleteAll();
@@ -197,6 +198,8 @@ public class AdminTest {
         assertThat(savedWaste.getDescription()).isEqualTo("High-quality recycled plastic");
         assertThat(savedWaste.getAgent().getAgentId()).isEqualTo(2L);
     }
+
+
 
 
 }
