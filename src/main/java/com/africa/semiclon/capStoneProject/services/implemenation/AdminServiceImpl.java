@@ -77,8 +77,15 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public WasteReportResponse generateWasteReport(GenerateWasteReportRequest request) {
         List<Waste> wastes = wasteRepository.findAllByWasteCollectionDateBetween(request.getStartDate(), request.getEndDate());
+        List<WasteReport> reportItems = getWasteReports(wastes);
+        WasteReportResponse response = new WasteReportResponse();
+        response.setReportItems(reportItems);
+        response.setMessage("Report generated successfully");
+        return response;
+    }
 
-        List<WasteReport> reportItems = wastes.stream().map(waste -> {
+    private static List<WasteReport> getWasteReports(List<Waste> wastes) {
+        return wastes.stream().map(waste -> {
             WasteReport report = new WasteReport();
             report.setWasteId(waste.getWasteId());
             report.setCategory(waste.getType());
@@ -88,12 +95,8 @@ public class AdminServiceImpl implements AdminService {
             report.setCollectionDate(waste.getWasteCollectionDate());
             return report;
         }).collect(Collectors.toList());
-
-        WasteReportResponse response = new WasteReportResponse();
-        response.setReportItems(reportItems);
-        response.setMessage("Report generated successfully");
-        return response;
     }
+
 
     @Override
     public NotificationResponse sendNotificationRequest(NotificationRequest notificationRequest) {
