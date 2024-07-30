@@ -25,7 +25,7 @@ public class Agent {
     private String username;
     private String password;
     private String phoneNumber;
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
     @OneToOne
     private Address address;
