@@ -6,7 +6,10 @@ import com.africa.semiclon.capStoneProject.data.models.User;
 import com.africa.semiclon.capStoneProject.data.repository.AdminRepository;
 import com.africa.semiclon.capStoneProject.data.repository.TransactionRepository;
 import com.africa.semiclon.capStoneProject.data.repository.UserRepository;
-import com.africa.semiclon.capStoneProject.dtos.request.*;
+import com.africa.semiclon.capStoneProject.dtos.request.CreatePlanRequest;
+import com.africa.semiclon.capStoneProject.dtos.request.InitializePaymentRequest;
+import com.africa.semiclon.capStoneProject.dtos.request.PaymentRequest;
+import com.africa.semiclon.capStoneProject.dtos.request.WithdrawRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.CreatePlanResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.InitializePaymentResponse;
 import com.africa.semiclon.capStoneProject.exception.AdminException;
@@ -14,9 +17,9 @@ import com.africa.semiclon.capStoneProject.exception.UserNotFoundException;
 import com.africa.semiclon.capStoneProject.services.interfaces.PaymentService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -34,8 +37,11 @@ public class TransactionServiceImpl {
 
     @Transactional
     public CreatePlanResponse makePaymentToUser(PaymentRequest request) {
-        checkAdmin(request);
-        User user = checkUser(request);
+        adminRepository.findById(request.getAdminId())
+                .orElseThrow(() -> new AdminException("Admin not found"));
+
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         CreatePlanRequest createPlanRequest = new CreatePlanRequest();
         createPlanRequest.setName(user.getUsername());
@@ -44,21 +50,17 @@ public class TransactionServiceImpl {
         CreatePlanResponse createPlanResponse = paystackService.createPlanResponse(createPlanRequest);
 
         if (createPlanResponse != null && Boolean.TRUE.equals(createPlanResponse.getStatus())) {
-            Transaction transaction = Transaction.builder()
+            transactionRepository.save(Transaction.builder()
                     .adminId(request.getAdminId())
                     .userId(request.getUserId())
-                    .amount((createPlanResponse.getData().getAmount()))
+                    .amount(createPlanResponse.getData().getAmount())
                     .gatewayResponse("Payment created")
                     .paidAt(String.valueOf(new Date()))
                     .createdAt(String.valueOf(new Date()))
                     .channel("Online")
                     .currency(createPlanResponse.getData().getCurrency())
-                    .ipAddress("Unknown")
                     .planType(PricingPlanType.PAYMENT)
-                    .createdOn(new Date())
-                    .build();
-
-            transactionRepository.save(transaction);
+                    .build());
         } else {
             log.error("Failed to create plan response: {}", createPlanResponse);
         }
@@ -66,25 +68,12 @@ public class TransactionServiceImpl {
         return createPlanResponse;
     }
 
-    private User checkUser(PaymentRequest request) {
-        return userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-    }
-
-    private void checkAdmin(PaymentRequest request) {
-        adminRepository.findById(request.getAdminId())
-                .orElseThrow(() -> new AdminException("Admin not found"));
-    }
-
     @Transactional
     public void processWithdrawal(WithdrawRequest request) {
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        GetBalanceRequest getBalanceRequest = new GetBalanceRequest();
-        getBalanceRequest.setUserId(request.getUserId());
-
-        BigDecimal userBalance = getUserBalance(getBalanceRequest);
+        BigDecimal userBalance = user.getBalance();
         if (userBalance.compareTo(request.getAmount()) < 0) {
             throw new IllegalArgumentException("Insufficient balance");
         }
@@ -96,43 +85,22 @@ public class TransactionServiceImpl {
         InitializePaymentResponse initializePaymentResponse = paystackService.initializePaymentResponse(initializePaymentRequest);
 
         if (initializePaymentResponse != null && Boolean.TRUE.equals(initializePaymentResponse.getStatus())) {
-            Transaction transaction = Transaction.builder()
+            transactionRepository.save(Transaction.builder()
                     .userId(request.getUserId())
                     .reference(initializePaymentResponse.getData().getReference())
                     .amount(request.getAmount())
-                    .gatewayResponse("Withdrawal initialized") // Adjust if needed
-                    .paidAt(String.valueOf(new Date())) // Assuming payment is considered paid immediately
-                    .createdAt(String.valueOf(new Date())) // Assuming current time for creation
-                    .channel("Online") // Example, adjust based on your requirements
-                    .currency("NGN") // Assuming NGN, adjust based on your requirements
-                    .ipAddress("Unknown") // Set this accordingly
+                    .gatewayResponse("Withdrawal initialized")
+                    .paidAt(String.valueOf(new Date()))
+                    .createdAt(String.valueOf(new Date()))
+                    .channel("Online")
+                    .currency("NGN")
                     .planType(PricingPlanType.WITHDRAWAL)
-                    .createdOn(new Date())
-                    .build();
-            transactionRepository.save(transaction);
+                    .build());
 
-            deductUserBalance(request.getUserId(), request.getAmount());
-        } else {
-            log.error("Failed to initialize payment response: {}", initializePaymentResponse);
-        }
-    }
-
-    private BigDecimal getUserBalance(GetBalanceRequest request) {
-        return userRepository.findById(request.getUserId())
-                .map(User::getBalance)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-    }
-
-    private void deductUserBalance(Long userId, BigDecimal amount) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-
-        BigDecimal currentBalance = user.getBalance();
-        if (currentBalance.compareTo(amount) >= 0) {
-            user.setBalance(currentBalance.subtract(amount));
+            user.setBalance(userBalance.subtract(request.getAmount()));
             userRepository.save(user);
         } else {
-            throw new IllegalArgumentException("Insufficient balance");
+            log.error("Failed to initialize payment response: {}", initializePaymentResponse);
         }
     }
 }

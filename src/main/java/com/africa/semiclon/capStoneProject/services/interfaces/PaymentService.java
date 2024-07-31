@@ -12,4 +12,5 @@ public interface PaymentService {
 
     InitializePaymentResponse initializePaymentResponse(InitializePaymentRequest initializePaymentRequest);
 
+    InitializePaymentResponse initializePayment(InitializePaymentRequest request);
 }
