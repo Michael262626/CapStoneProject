@@ -1,0 +1,12 @@
+server:
+  port:
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/registration_db
+    username: postgres
+    password: oluwakemisola098
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true

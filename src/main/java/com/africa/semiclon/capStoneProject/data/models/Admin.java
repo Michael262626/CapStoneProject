@@ -11,7 +11,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.AUTO;
 import static java.time.LocalDateTime.now;
 
@@ -26,11 +25,10 @@ public class Admin {
     @Id
     @GeneratedValue(strategy = AUTO)
     private Long adminId;
-    private String username;
+    private String adminName;
     @Column(unique = true)
     private String adminEmail;
     private String adminPassword;
-    @Enumerated(value = STRING)
     @OneToMany
     private List<Transaction> transactions;
     @Setter(AccessLevel.NONE)

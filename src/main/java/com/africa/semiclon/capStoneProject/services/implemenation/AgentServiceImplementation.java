@@ -1,69 +1,96 @@
 package com.africa.semiclon.capStoneProject.services.implemenation;
 
+import com.africa.semiclon.capStoneProject.controller.VerificationToken;
 import com.africa.semiclon.capStoneProject.data.models.Agent;
 import com.africa.semiclon.capStoneProject.data.models.Authority;
-import com.africa.semiclon.capStoneProject.data.models.User;
+import com.africa.semiclon.capStoneProject.data.models.WasteCollection;
 import com.africa.semiclon.capStoneProject.data.repository.AgentRepository;
+import com.africa.semiclon.capStoneProject.data.repository.VerificationRepository;
+import com.africa.semiclon.capStoneProject.dtos.request.FindAgentRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.RegisterAgentRequest;
+import com.africa.semiclon.capStoneProject.dtos.request.SendWasteDetailRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.RegisterAgentResponse;
+import com.africa.semiclon.capStoneProject.dtos.response.SendWasteDetailResponse;
+import com.africa.semiclon.capStoneProject.exception.AgentExistAlreadyException;
+import com.africa.semiclon.capStoneProject.exception.AgentNotFoundException;
 import com.africa.semiclon.capStoneProject.services.interfaces.AgentService;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.UUID;
+import java.util.List;
 
+@Service
 public class AgentServiceImplementation implements AgentService {
 
 
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
-    private final MailService mailService;
+    private final VerificationRepository tokenRepository;
     private final AgentRepository agentRepository;
 
 
-    public AgentServiceImplementation(ModelMapper modelMapper, PasswordEncoder passwordEncoder, MailService mailService, AgentRepository agentRepository) {
+    public AgentServiceImplementation(ModelMapper modelMapper, PasswordEncoder passwordEncoder,VerificationRepository tokenRepository, AgentRepository agentRepository) {
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
-        this.mailService = mailService;
+        this.tokenRepository = tokenRepository;
         this.agentRepository = agentRepository;
     }
 
     @Override
     public RegisterAgentResponse createAccount(RegisterAgentRequest request) {
-        String verificationToken = UUID.randomUUID().toString();
+        verifyAgentExistence(request.getEmail());
         Agent agent = modelMapper.map(request,Agent.class);
         agent.setAuthorities(new HashSet<>());
         var authorities = agent.getAuthorities();
-        authorities.add(Authority.USER);
-        agent.setVerificationToken(verificationToken);
+        authorities.add(Authority.AGENT);
         agent.setPassword(passwordEncoder.encode(request.getPassword()));
         agent.setVerified(false);
         agent = agentRepository.save(agent);
-
-        String subject = "Verify your email";
-        String verificationLink = "https://greencycle.com/verify?token" + verificationToken;
-        String content = "Hello " + request.getUsername() + ",\n\nThank you for registering! Please verify your email by clicking the link below:\n" + verificationLink;
-        mailService.sendMail(request.getEmail(),subject,content);
-
         RegisterAgentResponse response = new RegisterAgentResponse();
         response.setEmail(request.getEmail());
         response.setMessage("registered successfully");
         response.setUsername(request.getUsername());
-        response.setId(agent.getAgentId());
+        response.setId(agent.getId());
         return response;
 
     }
 
-    public boolean verifyAgent(String token) {
-        Agent agent = agentRepository.findByVerificationToken(token);
-        if (agent != null) {
-            agent.setVerified(true);
-            agentRepository.save(agent);
-            return true;
-        }
-        return false;
+    @Override
+    public List<Agent> getAgents() {
+        return agentRepository.findAll();
     }
-}
+
+    @Override
+    public void saveAgentVerificationToken(Agent agent, String token) {
+        var verificationToken = new VerificationToken(token,agent);
+            tokenRepository.save(verificationToken);
+    }
+
+    @Override
+    public SendWasteDetailResponse sendWasteDetails(SendWasteDetailRequest request) {
+        Agent agent = modelMapper.map(request, WasteCollection.class).getAgentId();
+        agentRepository.save(agent);
+
+        return null;
+    }
+
+    @Override
+    public Agent findAgentById(FindAgentRequest findAgentRequest) {
+
+        return agentRepository.findById(findAgentRequest.getId()).orElseThrow(()->new AgentNotFoundException("Agent not found"));
+
+    }
+
+
+    private void  verifyAgentExistence(String email){
+        Agent agent = agentRepository.findByEmail(email);
+        if(agent != null){
+            throw new AgentExistAlreadyException(String.format("%s already exist",email));
+        }
+    }
+
+    }
+
 
