@@ -16,8 +16,6 @@ public interface AgentService {
 
     List<Agent> getAgents();
 
-    void saveAgentVerificationToken(Agent agent, String verificationToken);
-
     SendWasteDetailResponse sendWasteDetails(SendWasteDetailRequest request);
 
     Agent findAgentById(FindAgentRequest findAgentRequest);

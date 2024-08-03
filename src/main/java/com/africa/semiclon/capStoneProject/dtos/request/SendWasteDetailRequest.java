@@ -10,9 +10,10 @@ import lombok.Setter;
 public class SendWasteDetailRequest {
     @Id
     private Long agentId;
-    private String userName;
+    private String username;
     private Long userId;
     private Double wasteWeigh;
     private Category wasteCategory;
+
 
 }

@@ -13,6 +13,7 @@ import com.africa.semiclon.capStoneProject.dtos.response.RegisterAgentResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.SendWasteDetailResponse;
 import com.africa.semiclon.capStoneProject.exception.AgentExistAlreadyException;
 import com.africa.semiclon.capStoneProject.exception.AgentNotFoundException;
+import com.africa.semiclon.capStoneProject.security.services.interfaces.AuthServices;
 import com.africa.semiclon.capStoneProject.services.interfaces.AgentService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,14 +28,13 @@ public class AgentServiceImplementation implements AgentService {
 
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
-    private final VerificationRepository tokenRepository;
     private final AgentRepository agentRepository;
 
 
-    public AgentServiceImplementation(ModelMapper modelMapper, PasswordEncoder passwordEncoder,VerificationRepository tokenRepository, AgentRepository agentRepository) {
+
+    public AgentServiceImplementation(ModelMapper modelMapper, PasswordEncoder passwordEncoder, VerificationRepository tokenRepository, AgentRepository agentRepository, AuthServices authServices) {
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
-        this.tokenRepository = tokenRepository;
         this.agentRepository = agentRepository;
     }
 
@@ -46,7 +46,6 @@ public class AgentServiceImplementation implements AgentService {
         var authorities = agent.getAuthorities();
         authorities.add(Authority.AGENT);
         agent.setPassword(passwordEncoder.encode(request.getPassword()));
-        agent.setVerified(false);
         agent = agentRepository.save(agent);
         RegisterAgentResponse response = new RegisterAgentResponse();
         response.setEmail(request.getEmail());
@@ -62,23 +61,19 @@ public class AgentServiceImplementation implements AgentService {
         return agentRepository.findAll();
     }
 
-    @Override
-    public void saveAgentVerificationToken(Agent agent, String token) {
-        var verificationToken = new VerificationToken(token,agent);
-            tokenRepository.save(verificationToken);
-    }
+
 
     @Override
     public SendWasteDetailResponse sendWasteDetails(SendWasteDetailRequest request) {
         Agent agent = modelMapper.map(request, WasteCollection.class).getAgentId();
         agentRepository.save(agent);
 
+
         return null;
     }
 
     @Override
     public Agent findAgentById(FindAgentRequest findAgentRequest) {
-
         return agentRepository.findById(findAgentRequest.getId()).orElseThrow(()->new AgentNotFoundException("Agent not found"));
 
     }
@@ -89,6 +84,14 @@ public class AgentServiceImplementation implements AgentService {
         if(agent != null){
             throw new AgentExistAlreadyException(String.format("%s already exist",email));
         }
+    }
+
+    private void verifyEmail(){
+
+    }
+
+    private void verifyPassword(){
+
     }
 
     }

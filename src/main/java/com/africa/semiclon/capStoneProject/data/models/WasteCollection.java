@@ -1,13 +1,13 @@
 package com.africa.semiclon.capStoneProject.data.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+
+import static java.time.LocalDateTime.now;
 
 @Entity
 @Getter
@@ -21,5 +21,11 @@ public class WasteCollection {
     private Agent agentId;
     private Category wasteCategory;
     private Double wasteWeigh;
+    @JsonSerialize
     private LocalDateTime dateAndTimeCollected;
+
+    @PrePersist
+    public void setDateAndTimeCollected(){
+        this.dateAndTimeCollected = now();
+    }
 }
