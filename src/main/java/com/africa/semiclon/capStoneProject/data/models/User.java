@@ -28,12 +28,14 @@ import static java.time.LocalDateTime.now;
 public class User {
     @Id
     @GeneratedValue(strategy = AUTO)
-    private Long id;
+    private Long userId;
     private String username;
     @Column(unique = true, nullable = false)
     private String email;
     private String password;
+    private BigDecimal balance;
     @OneToOne
+    @JoinColumn(name = "address_id")
     private Address address;
     @OneToMany(fetch = FetchType.EAGER)
     private List<Transaction> transactions;
