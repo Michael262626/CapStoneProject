@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -27,6 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -140,27 +142,40 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public InitializePaymentResponse initializePaymentResponse(InitializePaymentRequest request) {
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
+        InitializePaymentResponse initializePaymentResponse = null;
+        try {
+            Gson gson = new Gson();
+            StringEntity postingString = new StringEntity(gson.toJson(request));
+            HttpClient client = HttpClientBuilder.create().build();
             HttpPost post = new HttpPost(PAYSTACK_INITIALIZE_PAY);
-            post.setHeader("Content-Type", "application/json");
-            post.setHeader("Authorization", "Bearer " + paystackSecretKey);
-            post.setEntity(new StringEntity(gson.toJson(request)));
+            post.setEntity(postingString);
+            post.addHeader("Content-type", "application/json");
+            post.addHeader("Authorization", "Bearer " + paystackSecretKey.trim());
 
             HttpResponse response = client.execute(post);
+
+            int statusCode = response.getStatusLine().getStatusCode();
             String responseBody = EntityUtils.toString(response.getEntity());
 
-            if (response.getStatusLine().getStatusCode() == 200) {
-                return gson.fromJson(responseBody, InitializePaymentResponse.class);
+            log.info("Response Status Code: {}", statusCode);
+            log.info("Response Body: {}", responseBody);
+
+            if (statusCode == HttpStatus.SC_OK) {
+                initializePaymentResponse = gson.fromJson(responseBody, InitializePaymentResponse.class);
+                if (initializePaymentResponse != null && initializePaymentResponse.getData() != null) {
+                    String url = initializePaymentResponse.getData().getAuthorizationUrl();
+                    log.info("Payment URL: {}", url);
+                }
             } else {
-                throw new RuntimeException("Failed with HTTP error code : " + response.getStatusLine().getStatusCode());
+                throw new RuntimeException("Paystack returned status code " + statusCode +
+                        ". Response: " + responseBody);
             }
-        } catch (Exception e) {
-            throw new RuntimeException("Error occurred while making API request", e);
+        } catch (IOException e) {
+            throw new RuntimeException("IO Exception occurred while processing the request", e);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Exception occurred while processing the request", e);
         }
+        return initializePaymentResponse;
     }
 
-    @Override
-    public InitializePaymentResponse initializePayment(InitializePaymentRequest request) {
-        return null;
-    }
 }

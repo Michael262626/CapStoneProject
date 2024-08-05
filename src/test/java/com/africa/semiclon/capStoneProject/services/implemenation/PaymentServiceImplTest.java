@@ -46,7 +46,7 @@ public class PaymentServiceImplTest {
         assertEquals("Plan created", createPlanResponse.getMessage());
     }
     @Test
-    public void testInitializePaymentResponse() throws Exception {
+    public void testInitializePaymentResponse() {
         InitializePaymentRequest initializePaymentRequest = new InitializePaymentRequest();
         initializePaymentRequest.setAmount(BigDecimal.valueOf(1000));
         initializePaymentRequest.setEmail("test@example.com");
