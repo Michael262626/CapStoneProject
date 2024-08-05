@@ -11,6 +11,4 @@ public interface PaymentService {
     PaymentVerificationResponse paymentVerificationResponse(String reference, String plan, Long id) throws RuntimeException;
 
     InitializePaymentResponse initializePaymentResponse(InitializePaymentRequest initializePaymentRequest);
-
-    InitializePaymentResponse initializePayment(InitializePaymentRequest request);
 }
