@@ -15,6 +15,7 @@ import com.africa.semiclon.capStoneProject.dtos.response.InitializePaymentRespon
 import com.africa.semiclon.capStoneProject.exception.AdminException;
 import com.africa.semiclon.capStoneProject.exception.UserNotFoundException;
 import com.africa.semiclon.capStoneProject.services.interfaces.PaymentService;
+import com.africa.semiclon.capStoneProject.services.interfaces.TransactionService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ import java.util.Date;
 
 @Service
 @AllArgsConstructor
-public class TransactionServiceImpl {
+public class TransactionServiceImpl implements TransactionService {
 
     private static final Logger log = LoggerFactory.getLogger(TransactionServiceImpl.class);
 
