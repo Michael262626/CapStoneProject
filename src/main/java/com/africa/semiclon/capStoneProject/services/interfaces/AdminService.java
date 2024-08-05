@@ -4,6 +4,7 @@ import com.africa.semiclon.capStoneProject.dtos.request.*;
 import com.africa.semiclon.capStoneProject.dtos.response.*;
 
 public interface AdminService {
+    AdminResponse registerAdmin(AdminRequest registerRequest);
     ManageUserResponse manageUsers(ManageUsersRequest request);
     ViewWasteResponse viewAllWaste(ViewWasteRequest viewWasteRequest);
     AssignWasteResponse assignWasteToAgent(AssignWasteRequest request);
