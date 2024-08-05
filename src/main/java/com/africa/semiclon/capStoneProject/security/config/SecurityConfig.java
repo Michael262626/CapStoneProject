@@ -44,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers(POST,"/api/v1/users/sellWaste").permitAll()
                         .requestMatchers(PUT,"/api/v1/users/update").permitAll()
                         .requestMatchers("/api/v1/user/admin").hasAnyAuthority("ADMIN", "AGENT")
+                        .requestMatchers("/api/payments/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
