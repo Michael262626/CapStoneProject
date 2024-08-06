@@ -11,6 +11,7 @@ import com.africa.semiclon.capStoneProject.dtos.request.UpdateUserRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.CreateUserResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.SellWasteResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.UpdateUserResponse;
+import com.africa.semiclon.capStoneProject.exception.UserDetailsCannotBeNullOrEmpty;
 import com.africa.semiclon.capStoneProject.exception.UserNotFoundException;
 import com.africa.semiclon.capStoneProject.exception.UsernameExistsException;
 import com.africa.semiclon.capStoneProject.services.interfaces.UserService;
@@ -41,12 +42,25 @@ public class UserServiceImpl implements UserService {
         @Override
         public CreateUserResponse register (CreateUserRequest createUserRequest){
             if (userRepository.existsByEmail(createUserRequest.getEmail())) {throw new UsernameExistsException("Username already exists: " + createUserRequest.getEmail());}
+            validateEmptyString(createUserRequest);
             User newUser = validateUserDetails(createUserRequest);
             newUser = userRepository.save(newUser);
             var response = modelMapper.map(newUser, CreateUserResponse.class);
             response.setMessage("user registered successfully");
             return response;
         }
+
+    private static void validateEmptyString(CreateUserRequest createUserRequest) {
+        if (isEmptyOrNullString(createUserRequest.getEmail())) {throw new UserDetailsCannotBeNullOrEmpty("Email cannot be null or empty");}
+        if (isEmptyOrNullString(createUserRequest.getUsername())) {throw new UserDetailsCannotBeNullOrEmpty("Username cannot be null or empty");}
+        if (isEmptyOrNullString(createUserRequest.getPhoneNumber())) {throw new UserDetailsCannotBeNullOrEmpty("Email cannot be null or empty");}
+        if (isEmptyOrNullString(createUserRequest.getPassword())) {throw new UserDetailsCannotBeNullOrEmpty("Email cannot be null or empty");}
+    }
+
+    public static boolean isEmptyOrNullString(String str) {
+        return str == null || str.isEmpty() || str.isBlank();
+    }
+
 
     private User validateUserDetails(CreateUserRequest createUserRequest) {
         User newUser = modelMapper.map(createUserRequest, User.class);
