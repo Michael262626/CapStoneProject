@@ -7,10 +7,12 @@ import com.africa.semiclon.capStoneProject.data.repository.WasteRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.*;
 import com.africa.semiclon.capStoneProject.dtos.response.*;
 import com.africa.semiclon.capStoneProject.services.interfaces.AdminService;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
@@ -40,11 +42,14 @@ public class AdminTest {
         Agent agent = new Agent();
         agent.setAgentId(1L);
         agent.setUsername("Agent");
+        agent.setEmail("agent@gmail.com");
         agentRepository.save(agent);
 
         Agent agent1 = new Agent();
         agent1.setAgentId(2L);
+        agent1.setEmail("agent1@gmail.com");
         agent1.setUsername("Agent");
+
         agentRepository.save(agent1);
 
         Waste waste1 = new Waste();
