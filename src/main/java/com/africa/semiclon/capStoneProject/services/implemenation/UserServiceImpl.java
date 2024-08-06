@@ -11,9 +11,7 @@ import com.africa.semiclon.capStoneProject.dtos.request.UpdateUserRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.CreateUserResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.SellWasteResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.UpdateUserResponse;
-import com.africa.semiclon.capStoneProject.exception.UserDetailsCannotBeNullOrEmpty;
-import com.africa.semiclon.capStoneProject.exception.UserNotFoundException;
-import com.africa.semiclon.capStoneProject.exception.UsernameExistsException;
+import com.africa.semiclon.capStoneProject.exception.*;
 import com.africa.semiclon.capStoneProject.services.interfaces.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,8 +39,14 @@ public class UserServiceImpl implements UserService {
         }
         @Override
         public CreateUserResponse register (CreateUserRequest createUserRequest){
-            if (userRepository.existsByEmail(createUserRequest.getEmail())) {throw new UsernameExistsException("Username already exists: " + createUserRequest.getEmail());}
             validateEmptyString(createUserRequest);
+
+            if (userRepository.existsByEmail(createUserRequest.getEmail())) {
+            throw new EmailExistsException("Email already exists: " + createUserRequest.getEmail());}
+            if (userRepository.existsByUsername(createUserRequest.getUsername())) {
+            throw new UsernameExistsException("Username already exists: " + createUserRequest.getUsername());}
+            if (userRepository.existsByPhoneNumber(createUserRequest.getPhoneNumber())) {
+            throw new PhoneNumberExistsException("Phone number already exists: " + createUserRequest.getPhoneNumber());}
             User newUser = validateUserDetails(createUserRequest);
             newUser = userRepository.save(newUser);
             var response = modelMapper.map(newUser, CreateUserResponse.class);
