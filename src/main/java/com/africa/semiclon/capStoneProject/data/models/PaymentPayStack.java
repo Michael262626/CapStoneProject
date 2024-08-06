@@ -20,7 +20,6 @@ import static java.time.LocalDateTime.now;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "payment")
 public class PaymentPayStack {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
