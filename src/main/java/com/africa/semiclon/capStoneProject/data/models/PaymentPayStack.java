@@ -6,11 +6,8 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 import static java.time.LocalDateTime.now;
 
@@ -20,21 +17,33 @@ import static java.time.LocalDateTime.now;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "payment")
 public class PaymentPayStack {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Column(unique = true)
     private String reference;
+
     private BigDecimal amount;
     private String gatewayResponse;
-    private String paidAt;
-    private String createdAt;
+
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDateTime paidAt;
+
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDateTime createdAt;
+
     private String channel;
     private String currency;
     private String ipAddress;
+
     @Enumerated(EnumType.STRING)
     private PricingPlanType pricingPlanType;
 
@@ -44,6 +53,6 @@ public class PaymentPayStack {
 
     @PrePersist
     private void setTimeCreated(){
-        this.timeCreated= now();
+        this.timeCreated = now();
     }
 }

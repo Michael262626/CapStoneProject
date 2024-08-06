@@ -12,12 +12,12 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 
 import static jakarta.persistence.GenerationType.AUTO;
+import static jakarta.persistence.GenerationType.IDENTITY;
 import static java.time.LocalDateTime.now;
 
 @Setter
@@ -27,10 +27,11 @@ import static java.time.LocalDateTime.now;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = AUTO)
+    @GeneratedValue(strategy = IDENTITY)
+    @Column(name = "user_id")
     private Long userId;
     private String username;
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String email;
     private String password;
     private BigDecimal balance;
@@ -40,9 +41,10 @@ public class User {
     @OneToMany(fetch = FetchType.EAGER)
     private List<Transaction> transactions;
     @OneToMany(fetch = FetchType.EAGER)
-    private List<Waste> wastes = new ArrayList<>();
-    private BigDecimal totalWaste = BigDecimal.ZERO;
+    private List<Waste> wastes;
     private String phoneNumber;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PaymentPayStack> paymentPayStacks;
     @Setter(AccessLevel.NONE)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
