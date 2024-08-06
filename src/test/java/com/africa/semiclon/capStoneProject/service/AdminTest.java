@@ -39,12 +39,14 @@ public class AdminTest {
         userRepository.deleteAll();
         Agent agent = new Agent();
         agent.setAgentId(1L);
-        agent.setUsername("Agent");
+        agent.setUsername("Agent0");
+        agent.setEmail("agent0@gmail.com");
         agentRepository.save(agent);
 
         Agent agent1 = new Agent();
         agent1.setAgentId(2L);
-        agent1.setUsername("Agent");
+        agent1.setUsername("Agent1");
+        agent1.setEmail("agent1@gmail.com");
         agentRepository.save(agent1);
 
         Waste waste1 = new Waste();
@@ -123,7 +125,7 @@ public class AdminTest {
         WasteReport reportItem = response.getReportItems().getFirst();
         assertThat(reportItem.getCategory());
         assertThat(reportItem.getQuantity()).isEqualTo("10kg");
-        assertThat(reportItem.getAssignedAgent()).isEqualTo("Agent");
+        assertThat(reportItem.getAssignedAgent()).isEqualTo("Agent0");
 
     }
 
