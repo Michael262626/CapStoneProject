@@ -16,8 +16,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import static org.springframework.http.HttpMethod.POST;
-import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -45,6 +44,8 @@ public class SecurityConfig {
                         .requestMatchers(PUT,"/api/v1/users/update").permitAll()
                         .requestMatchers("/api/v1/user/admin").hasAnyAuthority("ADMIN", "AGENT")
                         .requestMatchers("/api/payments/**").permitAll()
+                        .requestMatchers(GET,"api/v1/admin/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
