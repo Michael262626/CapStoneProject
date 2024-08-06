@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.access.method.P;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -36,39 +37,8 @@ public class AdminTest {
     private WasteRepository wasteRepository;
 
 
-    @BeforeEach
-    public void setUp() {
-        userRepository.deleteAll();
-        Agent agent = new Agent();
-        agent.setAgentId(1L);
-        agent.setUsername("Agent");
-        agent.setEmail("agent@gmail.com");
-        agentRepository.save(agent);
-
-        Agent agent1 = new Agent();
-        agent1.setAgentId(2L);
-        agent1.setEmail("agent1@gmail.com");
-        agent1.setUsername("Agent");
-
-        agentRepository.save(agent1);
-
-        Waste waste1 = new Waste();
-        waste1.setType(PLASTIC);
-        waste1.setQuantity("10kg");
-        waste1.setPrice(BigDecimal.valueOf(500.00));
-        waste1.setAgent(agent);
-        waste1.setWasteCollectionDate(LocalDateTime.now().minusDays(1));
-        wasteRepository.save(waste1);
-
-        Waste waste2 = new Waste();
-        waste2.setType(POLYTHENEBAG);
-        waste2.setQuantity("5kg");
-        waste2.setPrice(BigDecimal.valueOf(200.00));
-        waste2.setWasteCollectionDate(LocalDateTime.now().minusDays(2));
-        wasteRepository.save(waste2);
-    }
-
     @Test
+    @DirtiesContext
     public void testAdminCanManageMultipleUsers() {
         User user1 = new User();
         user1.setUsername("User1");
@@ -92,6 +62,7 @@ public class AdminTest {
     }
 
     @Test
+    @DirtiesContext
     public void testAdminCanViewWastes(){
         ViewWasteRequest viewWasteRequest = new ViewWasteRequest();
         viewWasteRequest.setAdminId(1L);
@@ -116,9 +87,22 @@ public class AdminTest {
 
     @Test
     public void testGenerateWasteReport(){
+        Agent agent = new Agent();
+        agent.setAgentId(2L);
+        agent.setUsername("Agent1");
+        Waste waste1 = new Waste();
+        waste1.setWasteId(1L);
+        waste1.setType(PLASTIC);
+        waste1.setQuantity("10kg");
+        waste1.setPrice(BigDecimal.valueOf(100));
+        waste1.setWasteCollectionDate(LocalDateTime.now().minusDays(2));
+        waste1.setAgent(agent);
+        wasteRepository.save(waste1);
+
         GenerateWasteReportRequest request = new GenerateWasteReportRequest();
         request.setStartDate(LocalDateTime.now().minusDays(5));
         request.setEndDate(LocalDateTime.now());
+
         WasteReportResponse response = adminService.generateWasteReport(request);
 
         assertThat(response).isNotNull();
@@ -127,7 +111,7 @@ public class AdminTest {
 
         WasteReport reportItem = response.getReportItems().getFirst();
         assertThat(reportItem.getQuantity()).isEqualTo("10kg");
-        assertThat(reportItem.getAssignedAgent()).isEqualTo("Agent");
+        assertThat(reportItem.getAssignedAgent()).isEqualTo("Agent1");
 
     }
 
