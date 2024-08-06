@@ -28,7 +28,7 @@ public class AdminControl {
             CreatePlanResponse response = transactionService.makePaymentToUser(request);
             return ResponseEntity.ok(response);
         } catch (AdminException | UserNotFoundException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage()); // Customize error handling as needed
         }
     }
 
@@ -38,7 +38,7 @@ public class AdminControl {
             transactionService.processWithdrawal(request);
             return ResponseEntity.ok().build();
         } catch (UserNotFoundException | IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().build(); // Customize error handling as needed
         }
     }
 }
