@@ -17,6 +17,7 @@ import java.util.Set;
 
 
 import static jakarta.persistence.GenerationType.AUTO;
+import static jakarta.persistence.GenerationType.IDENTITY;
 import static java.time.LocalDateTime.now;
 
 @Setter
@@ -26,7 +27,8 @@ import static java.time.LocalDateTime.now;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = AUTO)
+    @GeneratedValue(strategy = IDENTITY)
+    @Column(name = "user_id")
     private Long userId;
     private String username;
     @Column(unique = true)
@@ -41,6 +43,8 @@ public class User {
     @OneToMany(fetch = FetchType.EAGER)
     private List<Waste> wastes;
     private String phoneNumber;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PaymentPayStack> paymentPayStacks;
     @Setter(AccessLevel.NONE)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)

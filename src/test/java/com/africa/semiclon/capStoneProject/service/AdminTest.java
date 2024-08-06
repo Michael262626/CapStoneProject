@@ -23,8 +23,8 @@ import static com.africa.semiclon.capStoneProject.data.models.Category.POLYTHENE
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@Sql(scripts = {"/db/data.sql"})
 @SpringBootTest
+@Sql(scripts = {"/db/data.sql"})
 public class AdminTest {
     @Autowired
     private AdminService adminService;
@@ -126,7 +126,6 @@ public class AdminTest {
         assertThat(response.getMessage()).isEqualTo("Report generated successfully");
 
         WasteReport reportItem = response.getReportItems().getFirst();
-        assertThat(reportItem.getCategory());
         assertThat(reportItem.getQuantity()).isEqualTo("10kg");
         assertThat(reportItem.getAssignedAgent()).isEqualTo("Agent");
 
