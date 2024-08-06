@@ -38,6 +38,8 @@ public class User {
     private Address address;
     @OneToMany(fetch = FetchType.EAGER)
     private List<Transaction> transactions;
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<Waste> wastes;
     private String phoneNumber;
     @Setter(AccessLevel.NONE)
     @JsonSerialize(using = LocalDateTimeSerializer.class)

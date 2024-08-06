@@ -97,11 +97,10 @@ public class UserServiceImpl implements UserService {
     }
 
     private void checkAndSetWasteForUsers(SellWasteRequest sellWasteRequest, User user, Waste waste) {
-        List<Waste> wastes = user.getWastes();
-        if (wastes == null) wastes = new ArrayList<>();
-        wastes.add(waste);
-        user.setWastes(wastes);
-        user.setTotalWaste(user.getTotalWaste().add(BigDecimal.valueOf((sellWasteRequest.getWasteWeight()))));
+        wasteRepository.findById(user.getUserId());
+        String wastes = sellWasteRequest.getQuantity();
+        if (wastes == null) wastes = String.valueOf(new ArrayList<>());
+        waste.setQuantity(wastes);
         userRepository.save(user);
     }
 
