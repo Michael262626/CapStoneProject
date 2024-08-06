@@ -154,13 +154,13 @@ public class AdminTest {
         user.setEmail("testuser@example.com");
         user.setPassword("password123");
         userRepository.save(user);
-        User savedUser = userRepository.findById(user.getId()).orElse(null);
+        User savedUser = userRepository.findById(user.getUserId()).orElse(null);
         assertThat(savedUser).isNotNull();
         DeleteUserRequest deleteRequest = new DeleteUserRequest();
-        deleteRequest.setUserId(user.getId());
+        deleteRequest.setUserId(user.getUserId());
 
         adminService.deleteUser(deleteRequest);
-        User deletedUser = userRepository.findById(user.getId()).orElse(null);
+        User deletedUser = userRepository.findById(user.getUserId()).orElse(null);
         assertThat(deletedUser).isNull();
     }
 

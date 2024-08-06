@@ -1,12 +1,17 @@
 package com.africa.semiclon.capStoneProject.services.interfaces;
 
-import com.africa.semiclon.capStoneProject.dtos.request.AdminRequest;
-import com.africa.semiclon.capStoneProject.dtos.request.RegisterRequest;
-import com.africa.semiclon.capStoneProject.dtos.response.AdminResponse;
-import com.africa.semiclon.capStoneProject.dtos.response.RegisterResponse;
+import com.africa.semiclon.capStoneProject.dtos.request.*;
+import com.africa.semiclon.capStoneProject.dtos.response.*;
 
 public interface AdminService {
     AdminResponse registerAdmin(AdminRequest registerRequest);
-
+    ManageUserResponse manageUsers(ManageUsersRequest request);
+    ViewWasteResponse viewAllWaste(ViewWasteRequest viewWasteRequest);
+    AssignWasteResponse assignWasteToAgent(AssignWasteRequest request);
+    WasteReportResponse generateWasteReport(GenerateWasteReportRequest request);
+    NotificationResponse sendNotificationRequest(NotificationRequest notificationRequest);
+    DeleteUserResponse deleteUser(DeleteUserRequest deleteRequest);
+    RegisterAgentResponse registerAgent(RegisterAgentRequest registerRequest);
+    RegisterWasteResponse registerWasteForSale(RegisterWasteRequest registerWasteRequest);
 
 }

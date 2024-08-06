@@ -20,7 +20,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,13 +37,15 @@ public class AdminControllerTest {
     @Test
     @WithMockUser(roles = {"ADMIN"})
     public void manageUsersTest() throws Exception {
+        ManageUsersRequest request = new ManageUsersRequest();
+        request.setAdminId(1L);
         ManageUserResponse response = new ManageUserResponse();
         Mockito.when(adminService.manageUsers(Mockito.any(ManageUsersRequest.class)))
                 .thenReturn(response);
-        mockMvc.perform(get("/api/v1/admin/manageUsers")
+        mockMvc.perform(post("/api/v1/admin/manageUsers")
                         .contentType(APPLICATION_JSON)
-                        .content("{\"adminId\": \"300\"}"))
-                .andExpect(status().isCreated())
+                        .content("{\"adminId\": \"1\"}"))
+                .andExpect(status().isOk())
                 .andDo(print());
 
     }
