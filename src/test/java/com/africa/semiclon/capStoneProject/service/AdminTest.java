@@ -7,10 +7,12 @@ import com.africa.semiclon.capStoneProject.data.repository.WasteRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.*;
 import com.africa.semiclon.capStoneProject.dtos.response.*;
 import com.africa.semiclon.capStoneProject.services.interfaces.AdminService;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
@@ -39,14 +41,15 @@ public class AdminTest {
         userRepository.deleteAll();
         Agent agent = new Agent();
         agent.setAgentId(1L);
-        agent.setUsername("Agent0");
-        agent.setEmail("agent0@gmail.com");
+        agent.setUsername("Agent");
+        agent.setEmail("agent@gmail.com");
         agentRepository.save(agent);
 
         Agent agent1 = new Agent();
         agent1.setAgentId(2L);
-        agent1.setUsername("Agent1");
         agent1.setEmail("agent1@gmail.com");
+        agent1.setUsername("Agent");
+
         agentRepository.save(agent1);
 
         Waste waste1 = new Waste();
@@ -125,7 +128,7 @@ public class AdminTest {
         WasteReport reportItem = response.getReportItems().getFirst();
         assertThat(reportItem.getCategory());
         assertThat(reportItem.getQuantity()).isEqualTo("10kg");
-        assertThat(reportItem.getAssignedAgent()).isEqualTo("Agent0");
+        assertThat(reportItem.getAssignedAgent()).isEqualTo("Agent");
 
     }
 
