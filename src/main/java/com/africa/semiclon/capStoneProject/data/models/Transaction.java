@@ -1,49 +1,31 @@
 package com.africa.semiclon.capStoneProject.data.models;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import lombok.*;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Date;
 
-import static jakarta.persistence.GenerationType.AUTO;
-import static java.time.LocalDateTime.now;
-
-@Setter
-@Getter
 @Entity
-@ToString
-@Table(name = "transactions")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Transaction {
     @Id
-    @GeneratedValue(strategy = AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long transactionId;
-    private Long wasteId;
     private Long userId;
     private Long adminId;
-    private BigDecimal price;
-    @Setter(AccessLevel.NONE)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime timeCreated;
-    @Setter(AccessLevel.NONE)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime timeUpdated;
-
-    @PrePersist
-    private void setTimeCreated(){
-        this.timeCreated= now();
-    }
-    @PreUpdate
-    private void setTimeUpdated(){
-        this.timeUpdated= now();
-    }
+    private String reference;
+    private BigDecimal amount;
+    private String gatewayResponse;
+    private String paidAt;
+    private String createdAt;
+    private String channel;
+    private String currency;
+    private String ipAddress;
+    private PricingPlanType planType;
+    private Date createdOn;
 }
+

@@ -1,17 +1,17 @@
 package com.africa.semiclon.capStoneProject.services.implemenation;
 
-import com.africa.semiclon.capStoneProject.data.models.Agent;
-import com.africa.semiclon.capStoneProject.data.models.User;
-import com.africa.semiclon.capStoneProject.data.models.Waste;
-import com.africa.semiclon.capStoneProject.data.models.WasteReport;
+import com.africa.semiclon.capStoneProject.data.models.*;
+import com.africa.semiclon.capStoneProject.data.repository.AdminRepository;
 import com.africa.semiclon.capStoneProject.data.repository.AgentRepository;
 import com.africa.semiclon.capStoneProject.data.repository.UserRepository;
 import com.africa.semiclon.capStoneProject.data.repository.WasteRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.*;
 import com.africa.semiclon.capStoneProject.dtos.response.*;
+import com.africa.semiclon.capStoneProject.exception.AdminException;
 import com.africa.semiclon.capStoneProject.exception.AgentNotFoundException;
 import com.africa.semiclon.capStoneProject.exception.WasteNotFoundException;
 import com.africa.semiclon.capStoneProject.services.interfaces.AdminService;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,23 +20,29 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class AdminServiceImpl implements AdminService {
     private final UserRepository userRepository;
+    private final AdminRepository adminRepository;
     private final WasteRepository wasteRepository;
     private final AgentRepository agentRepository;
     private final EmailService emailService;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
-
-    public AdminServiceImpl(UserRepository userRepository, WasteRepository wasteRepository, AgentRepository agentRepository, EmailService emailService, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-
-        this.wasteRepository = wasteRepository;
-        this.agentRepository = agentRepository;
-        this.emailService = emailService;
-        this.modelMapper = modelMapper;
-        this.passwordEncoder = passwordEncoder;
+    public AdminResponse registerAdmin(AdminRequest registerRequest) {
+        Admin check = adminRepository.findByUsername(registerRequest.getUsername());
+        if (check != null) {
+            throw new AdminException("Username already exists");
+        }
+        Admin adminToBeRegistered= Admin.builder()
+                .username(registerRequest.getUsername())
+                .adminEmail(registerRequest.getEmail())
+                .adminPassword(registerRequest.getPassword())
+                .authority(registerRequest.getAuthority())
+                .build();
+        adminRepository.save(adminToBeRegistered);
+        return modelMapper.map(adminToBeRegistered, AdminResponse.class);
     }
 
     @Override
@@ -77,15 +83,8 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public WasteReportResponse generateWasteReport(GenerateWasteReportRequest request) {
         List<Waste> wastes = wasteRepository.findAllByWasteCollectionDateBetween(request.getStartDate(), request.getEndDate());
-        List<WasteReport> reportItems = getWasteReports(wastes);
-        WasteReportResponse response = new WasteReportResponse();
-        response.setReportItems(reportItems);
-        response.setMessage("Report generated successfully");
-        return response;
-    }
 
-    private static List<WasteReport> getWasteReports(List<Waste> wastes) {
-        return wastes.stream().map(waste -> {
+        List<WasteReport> reportItems = wastes.stream().map(waste -> {
             WasteReport report = new WasteReport();
             report.setWasteId(waste.getWasteId());
             report.setCategory(waste.getType());
@@ -95,8 +94,12 @@ public class AdminServiceImpl implements AdminService {
             report.setCollectionDate(waste.getWasteCollectionDate());
             return report;
         }).collect(Collectors.toList());
-    }
 
+        WasteReportResponse response = new WasteReportResponse();
+        response.setReportItems(reportItems);
+        response.setMessage("Report generated successfully");
+        return response;
+    }
 
     @Override
     public NotificationResponse sendNotificationRequest(NotificationRequest notificationRequest) {

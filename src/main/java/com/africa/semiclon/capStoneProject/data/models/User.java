@@ -12,7 +12,6 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -28,19 +27,17 @@ import static java.time.LocalDateTime.now;
 public class User {
     @Id
     @GeneratedValue(strategy = AUTO)
-    private Long id;
-    @Column(unique = true, nullable = false)
+    private Long userId;
     private String username;
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String email;
     private String password;
+    private BigDecimal balance;
     @OneToOne
+    @JoinColumn(name = "address_id")
     private Address address;
     @OneToMany(fetch = FetchType.EAGER)
     private List<Transaction> transactions;
-    @OneToMany(fetch = FetchType.EAGER)
-    private List<Waste> wastes = new ArrayList<>();
-    private BigDecimal totalWaste = BigDecimal.ZERO;
     private String phoneNumber;
     @Setter(AccessLevel.NONE)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
