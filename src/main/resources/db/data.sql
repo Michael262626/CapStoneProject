@@ -25,7 +25,7 @@ insert into waste(waste_id, user_id, agent_id, price, quantity, type, url, time_
 insert into admin(id, admin_email, admin_password, username, time_created, time_updated) values
                                                                                                               (300, 'admin@gmail.com', 'pass', 'username', '2024-07-13T14:02:27.425305100Z', '2024-07-13T14:02:27.434315200');
 
-insert into payment_pay_stack(id, user_user_id, reference, amount, gateway_response, paid_at, created_at, channel, currency, ip_address, pricing_plan_type, created_on) values
+insert into payment_pay_stack(id, user_user_id, reference, amount, gateway_response, paid_at, created_at, channel, currency, ip_address, pricing_plan_type, time_created) values
                                                                                                                                                                         (1, 10, 'pay_12345', 100.00, 'Success', '2024-07-04T15:03:03.792009700', '2024-07-01 10:05:00', 'card', 'NGN', '192.168.0.1', 'PAYMENT', '2024-07-01 10:05:00'),
                                                                                                                                                                         (2, 20, 'pay_67890', 250.50, 'Success', '2024-07-04T15:06:03.792009700', '2024-07-01 11:10:00', 'bank', 'NGN', '192.168.0.2', 'PAYMENT', '2024-07-01 11:10:00'),
                                                                                                                                                                         (3, 30, 'pay_11223', 500.75, 'Failed', '2024-07-04T15:01:03.792009700', '2024-07-01 12:15:00', 'card', 'USD', '192.168.0.3', 'WITHDRAWAL', '2024-07-01 12:15:00');

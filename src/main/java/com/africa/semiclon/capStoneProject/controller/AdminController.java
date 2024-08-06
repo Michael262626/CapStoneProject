@@ -34,7 +34,7 @@ public class AdminController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
     @PostMapping("/generateWasteReport")
-    public ResponseEntity<WasteReportResponse> assignWasteToAgent(@RequestBody GenerateWasteReportRequest generateWasteReportRequest) {
+    public ResponseEntity<WasteReportResponse> generateWasteReport(@RequestBody GenerateWasteReportRequest generateWasteReportRequest) {
         WasteReportResponse response = adminService.generateWasteReport(generateWasteReportRequest);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
