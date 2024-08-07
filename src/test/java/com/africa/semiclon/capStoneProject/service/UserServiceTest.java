@@ -1,7 +1,6 @@
 package com.africa.semiclon.capStoneProject.service;
 
 import com.africa.semiclon.capStoneProject.data.models.Category;
-import com.africa.semiclon.capStoneProject.data.repository.UserRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.CreateUserRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.SellWasteRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.UpdateUserRequest;

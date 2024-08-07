@@ -40,19 +40,22 @@ public class UserServiceImpl implements UserService {
         @Override
         public CreateUserResponse register (CreateUserRequest createUserRequest){
             validateEmptyString(createUserRequest);
-
-            if (userRepository.existsByEmail(createUserRequest.getEmail())) {
-            throw new EmailExistsException("Email already exists: " + createUserRequest.getEmail());}
-            if (userRepository.existsByUsername(createUserRequest.getUsername())) {
-            throw new UsernameExistsException("Username already exists: " + createUserRequest.getUsername());}
-            if (userRepository.existsByPhoneNumber(createUserRequest.getPhoneNumber())) {
-            throw new PhoneNumberExistsException("Phone number already exists: " + createUserRequest.getPhoneNumber());}
+            checkingIfCreateUserRequestExists(createUserRequest);
             User newUser = validateUserDetails(createUserRequest);
             newUser = userRepository.save(newUser);
             var response = modelMapper.map(newUser, CreateUserResponse.class);
             response.setMessage("user registered successfully");
             return response;
         }
+
+    private void checkingIfCreateUserRequestExists(CreateUserRequest createUserRequest) {
+        if (userRepository.existsByEmail(createUserRequest.getEmail())) {
+        throw new EmailExistsException("Email already exists: " + createUserRequest.getEmail());}
+        if (userRepository.existsByUsername(createUserRequest.getUsername())) {
+        throw new UsernameExistsException("Username already exists: " + createUserRequest.getUsername());}
+        if (userRepository.existsByPhoneNumber(createUserRequest.getPhoneNumber())) {
+        throw new PhoneNumberExistsException("Phone number already exists: " + createUserRequest.getPhoneNumber());}
+    }
 
     private static void validateEmptyString(CreateUserRequest createUserRequest) {
         if (isEmptyOrNullString(createUserRequest.getEmail())) {throw new UserDetailsCannotBeNullOrEmpty("Email cannot be null or empty");}
