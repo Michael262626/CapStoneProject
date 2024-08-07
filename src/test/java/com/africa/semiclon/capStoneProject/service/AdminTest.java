@@ -38,7 +38,6 @@ public class AdminTest {
 
 
     @Test
-    @DirtiesContext
     public void testAdminCanManageMultipleUsers() {
         User user1 = new User();
         user1.setUsername("User1");
@@ -62,7 +61,6 @@ public class AdminTest {
     }
 
     @Test
-    @DirtiesContext
     public void testAdminCanViewWastes(){
         ViewWasteRequest viewWasteRequest = new ViewWasteRequest();
         viewWasteRequest.setAdminId(1L);
