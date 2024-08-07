@@ -27,5 +27,7 @@ public class Transaction {
     private String ipAddress;
     private PricingPlanType planType;
     private Date createdOn;
+    @OneToOne
+    private Points points;
 }
 
