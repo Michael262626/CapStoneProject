@@ -2,6 +2,7 @@ package com.africa.semiclon.capStoneProject.controller;
 
 import com.africa.semiclon.capStoneProject.data.models.User;
 import com.africa.semiclon.capStoneProject.dtos.request.CreateUserRequest;
+import com.africa.semiclon.capStoneProject.dtos.request.NotificationRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.SellWasteRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.UpdateUserRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.CreateUserResponse;
@@ -22,8 +23,8 @@ public class UserController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<CreateUserResponse> registerUser(@RequestBody CreateUserRequest createUserRequest) {
-        CreateUserResponse response = userService.register(createUserRequest);
+    public ResponseEntity<CreateUserResponse> registerUser(@RequestBody CreateUserRequest createUserRequest, NotificationRequest notificationRequest) {
+        CreateUserResponse response = userService.register(createUserRequest, notificationRequest);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 

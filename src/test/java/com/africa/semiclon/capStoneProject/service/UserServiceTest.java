@@ -36,7 +36,7 @@ public class UserServiceTest {
         CreateUserRequest createUserRequest = new CreateUserRequest();
         createUserRequest.setEmail("test@gmail.com");
         createUserRequest.setUsername("test");
-        createUserRequest.setPhoneNumber("08163933470");
+        createUserRequest.setPhoneNumber("+ 1111111111122234");
         createUserRequest.setPassword("password");
         createUserResponse = userService.register(createUserRequest);
     }
