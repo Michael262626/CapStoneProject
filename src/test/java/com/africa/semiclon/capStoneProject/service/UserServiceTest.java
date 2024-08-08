@@ -34,10 +34,10 @@ public class UserServiceTest {
     @BeforeEach
     void setup() {
         CreateUserRequest createUserRequest = new CreateUserRequest();
-        createUserRequest.setEmail("test@gmail.com");
+        createUserRequest.setEmail("tobantu@gmail.com");
         createUserRequest.setUsername("test");
-        createUserRequest.setPhoneNumber("+ 1111111111122234");
-        createUserRequest.setPassword("password");
+        createUserRequest.setPhoneNumber("+1111111111122234");
+        createUserRequest.setPassword("@Twi1234");
         createUserResponse = userService.register(createUserRequest);
     }
 
@@ -50,7 +50,7 @@ public class UserServiceTest {
     @Test
     void testThatUserCannotRegisterWithExistingEmail() {
         CreateUserRequest duplicateEmailRequest = new CreateUserRequest();
-        duplicateEmailRequest.setEmail("test@gmail.com");
+        duplicateEmailRequest.setEmail("tobantu@gmail.com");
         duplicateEmailRequest.setUsername("test");
         duplicateEmailRequest.setPhoneNumber("08163933470");
         duplicateEmailRequest.setPassword("password123");

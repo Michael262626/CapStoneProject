@@ -23,8 +23,8 @@ public class UserController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<CreateUserResponse> registerUser(@RequestBody CreateUserRequest createUserRequest, NotificationRequest notificationRequest) {
-        CreateUserResponse response = userService.register(createUserRequest, notificationRequest);
+    public ResponseEntity<CreateUserResponse> registerUser(@RequestBody CreateUserRequest createUserRequest) {
+        CreateUserResponse response = userService.register(createUserRequest);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 

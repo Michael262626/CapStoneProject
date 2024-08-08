@@ -6,7 +6,6 @@ import com.africa.semiclon.capStoneProject.data.models.Waste;
 import com.africa.semiclon.capStoneProject.data.repository.UserRepository;
 import com.africa.semiclon.capStoneProject.data.repository.WasteRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.CreateUserRequest;
-import com.africa.semiclon.capStoneProject.dtos.request.NotificationRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.SellWasteRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.UpdateUserRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.CreateUserResponse;
@@ -28,23 +27,22 @@ public class UserServiceImpl implements UserService {
     private final WasteRepository wasteRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
-    private final EmailService emailService;
 
-    public UserServiceImpl(UserRepository userRepository, WasteRepository wasteRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, EmailService emailService) {
+
+    public UserServiceImpl(UserRepository userRepository,
+                           WasteRepository wasteRepository, ModelMapper modelMapper,
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.wasteRepository = wasteRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
-        this.emailService = emailService;
     }
 
     @Override
-    public CreateUserResponse register(CreateUserRequest createUserRequest, NotificationRequest notificationRequest) {
+    public CreateUserResponse register(CreateUserRequest createUserRequest) {
         validateCreateUserRequest(createUserRequest);
         checkIfUserExists(createUserRequest);
         User newUser = mapAndPrepareUser(createUserRequest);
-        emailService.sendEmail(notificationRequest.getRecipientEmail(),
-                notificationRequest.getTitle(), notificationRequest.getContent());
         newUser = userRepository.save(newUser);
         CreateUserResponse response = modelMapper.map(newUser, CreateUserResponse.class);
         response.setMessage("User registered successfully");

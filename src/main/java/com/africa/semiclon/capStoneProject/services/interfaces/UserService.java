@@ -17,7 +17,7 @@ public interface UserService {
 
     User getById(long l);
 
-    CreateUserResponse register(CreateUserRequest createUserRequest, NotificationRequest notificationRequest);
+    CreateUserResponse register(CreateUserRequest createUserRequest);
 
     UpdateUserResponse updateProfile(UpdateUserRequest updateUserRequest);
 
