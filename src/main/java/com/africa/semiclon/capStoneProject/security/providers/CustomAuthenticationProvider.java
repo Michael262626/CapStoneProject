@@ -1,7 +1,6 @@
 package com.africa.semiclon.capStoneProject.security.providers;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +17,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 
 
+
     private UserDetailsService userDetailsService;
+
+
     private PasswordEncoder passwordEncoder;
 
 

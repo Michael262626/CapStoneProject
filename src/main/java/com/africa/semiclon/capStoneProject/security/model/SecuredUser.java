@@ -1,6 +1,6 @@
 package com.africa.semiclon.capStoneProject.security.model;
 
-import com.africa.semiclon.capStoneProject.data.models.Agent;
+
 import com.africa.semiclon.capStoneProject.data.models.User;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

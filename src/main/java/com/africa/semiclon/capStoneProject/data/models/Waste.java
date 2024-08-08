@@ -1,5 +1,7 @@
 package com.africa.semiclon.capStoneProject.data.models;
 
+import com.africa.semiclon.capStoneProject.data.models.Agent;
+import com.africa.semiclon.capStoneProject.data.models.User;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -9,7 +11,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,13 +23,14 @@ import static java.time.LocalDateTime.now;
 @Getter
 @Entity
 @ToString
+@Table(name = "wastes")
 public class Waste {
     @Id
     @GeneratedValue(strategy = AUTO)
     private Long wasteId;
     private Long userId;
     private String url;
-    private Long agentId;
+//    private Long agentId;
     @Enumerated(value = STRING)
     private Category type;
     private BigDecimal price;
@@ -43,12 +45,18 @@ public class Waste {
     private LocalDateTime timeUpdated;
     @ManyToOne
     private User uploader;
-
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDateTime wasteCollectionDate;
+    @OneToOne
+    private Agent agent;
+    private String description;
 
     @PrePersist
     private void setTimeCreated(){
         this.timeCreated= now();
     }
+
     @PreUpdate
     private void setTimeUpdated(){
         this.timeUpdated= now();

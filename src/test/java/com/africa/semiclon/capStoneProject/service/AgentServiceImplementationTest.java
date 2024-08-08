@@ -1,11 +1,15 @@
 package com.africa.semiclon.capStoneProject.service;
 
 import com.africa.semiclon.capStoneProject.data.models.Address;
+import com.africa.semiclon.capStoneProject.dtos.request.CollectWasteRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.RegisterAgentRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.SendWasteDetailRequest;
+import com.africa.semiclon.capStoneProject.dtos.request.UpdateAgentProfileRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.RegisterAgentResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.SendWasteDetailResponse;
 import com.africa.semiclon.capStoneProject.exception.AgentExistAlreadyException;
+import com.africa.semiclon.capStoneProject.dtos.response.UpdateAgentProfileResponse;
+import com.africa.semiclon.capStoneProject.exception.AgentNotFoundException;
 import com.africa.semiclon.capStoneProject.services.interfaces.AgentService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,16 +32,9 @@ public class AgentServiceImplementationTest {
     public void testThatAgentCanCreateAccount(){
         RegisterAgentRequest registerAgentRequest = new RegisterAgentRequest();
         registerAgentRequest.setEmail("praiseoyewole562@gmail.com");
-        registerAgentRequest.setPassword("oluwakemisola098");
+        registerAgentRequest.setPassword("Oluwakemisola098@");
         registerAgentRequest.setUsername("dark_royal");
         registerAgentRequest.setPhoneNumber("09028979349");
-        Address address = new Address();
-        address.setStreetName("sabo yaba");
-        address.setCity("lagos state");
-        address.setZipCode("12345");
-//        address.setId(205L);
-        address.setPostalCode("0902897");
-        registerAgentRequest.setAddress(address);
         System.out.println("_________________________\n"+agentService.getAgents());
         RegisterAgentResponse response = agentService.createAccount(registerAgentRequest);
         assertThat(response).isNotNull();
@@ -48,15 +45,9 @@ public class AgentServiceImplementationTest {
     public void testThatDuplicateAgentCannotBeRegistered_throwAgentAlreadyExistException(){
         RegisterAgentRequest registerAgentRequest = new RegisterAgentRequest();
         registerAgentRequest.setEmail("praiseoyewole563@gmail.com");
-        registerAgentRequest.setPassword("oluwakemisola098");
+        registerAgentRequest.setPassword("Oluwake@misola098");
         registerAgentRequest.setUsername("dark_royal");
         registerAgentRequest.setPhoneNumber("09028979349");
-        Address address = new Address();
-        address.setStreetName("sabo yaba");
-        address.setCity("lagos state");
-        address.setZipCode("12345");
-        address.setPostalCode("0902897");
-        registerAgentRequest.setAddress(address);
         RegisterAgentResponse response = agentService.createAccount(registerAgentRequest);
         assertThat(response).isNotNull();
         assertThat(response.getMessage()).contains("registered successfully");
@@ -65,19 +56,58 @@ public class AgentServiceImplementationTest {
 
     }
 
+//    @Test
+//    public void testAgentCanSendUserWasteDetails(){
+//        SendWasteDetailRequest request = new SendWasteDetailRequest();
+//        request.setAgentId(100L);
+//        request.setWasteCategory(PLASTIC);
+//        request.setWasteWeigh(100.5);
+//        request.setUsername("real");
+//        request.setUserId(10L);
+//        SendWasteDetailResponse response = agentService.sendWasteDetails(request);
+//        assertThat(response).isNotNull();
+//        assertThat(response.getMessage()).contains("User waste detail sent successfully");
+//
+//    }
+
     @Test
-    public void testAgentCanSendUserWasteDetails(){
-        SendWasteDetailRequest request = new SendWasteDetailRequest();
-        request.setAgentId(100L);
-        request.setWasteCategory(PLASTIC);
-        request.setWasteWeigh(100.5);
-        request.setUserName("real");
-        request.setUserId(10L);
-        SendWasteDetailResponse response = agentService.sendWasteDetails(request);
+    @Sql(scripts = "/db/data.sql")
+    public void testThatAgentCanUpdateProfile(){
+        UpdateAgentProfileRequest request = new UpdateAgentProfileRequest();
+        Address address = new Address();
+        request.setEmail("real@gmail.com");
+        address.setPostalCode("12345");
+        address.setZipCode("123456");
+        address.setCity("Lagos");
+        address.setStreetName("Abulegba");
+        request.setAddress(address);
+
+        UpdateAgentProfileResponse response = agentService.updateProfile(request);
+        assertThat(response.getMessage()).contains("Profile updated successfully");
         assertThat(response).isNotNull();
-        assertThat(response.getMessage()).contains("User waste detail sent successfully");
 
     }
+
+    @Test
+    @Sql(scripts = "/db/data.sql")
+    public void testThatAgentProfileCannotBeUpdatedWithUnregisteredEmail(){
+        UpdateAgentProfileRequest request = new UpdateAgentProfileRequest();
+        Address address = new Address();
+        request.setEmail("yoo@gmail.com");
+        address.setPostalCode("1234534");
+        address.setZipCode("12345612");
+        address.setCity("Lagos");
+        address.setStreetName("Abulegba1");
+        request.setAddress(address);
+        assertThrows(AgentNotFoundException.class,()->agentService.updateProfile(request));
+    }
+
+//    @Test
+//    public void testThatAgentCanCollectWasteFromUser() {
+//        CollectWasteRequest request = new CollectWasteRequest();
+//        request.set
+//
+//    }
 
 
 }

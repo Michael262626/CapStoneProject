@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+import static com.africa.semiclon.capStoneProject.data.models.Category.PLASTIC;
+
 @Service
 @Slf4j
 @AllArgsConstructor
