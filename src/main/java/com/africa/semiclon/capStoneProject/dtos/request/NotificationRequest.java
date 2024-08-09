@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class NotificationRequest {
+public class  NotificationRequest {
   private String recipientEmail;
   private String title;
   private String content;

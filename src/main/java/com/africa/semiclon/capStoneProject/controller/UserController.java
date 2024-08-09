@@ -2,6 +2,7 @@ package com.africa.semiclon.capStoneProject.controller;
 
 import com.africa.semiclon.capStoneProject.data.models.User;
 import com.africa.semiclon.capStoneProject.dtos.request.CreateUserRequest;
+import com.africa.semiclon.capStoneProject.dtos.request.NotificationRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.SellWasteRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.UpdateUserRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.CreateUserResponse;

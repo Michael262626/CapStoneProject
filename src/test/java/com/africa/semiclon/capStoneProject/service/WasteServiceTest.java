@@ -17,7 +17,8 @@ import static com.africa.semiclon.capStoneProject.utils.TestUtils.buildUploadWas
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@Sql(scripts = {"/db/data.sql"})
+@Sql(scripts = {"/db/da" +
+        "ta.sql"})
 public class WasteServiceTest {
     @Autowired
    private WasteService wasteService;

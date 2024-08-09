@@ -103,7 +103,8 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public NotificationResponse sendNotificationRequest(NotificationRequest notificationRequest) {
-        emailService.sendEmail(notificationRequest.getRecipientEmail(), notificationRequest.getTitle(), notificationRequest.getContent());
+        emailService.sendEmail(notificationRequest.getRecipientEmail(),
+                notificationRequest.getTitle(), notificationRequest.getContent());
 
         NotificationResponse response = new NotificationResponse();
         response.setId(1L);
