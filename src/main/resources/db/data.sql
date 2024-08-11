@@ -3,7 +3,14 @@ truncate table payment_pay_stack cascade;
 truncate table address cascade;
 truncate table blacklisted_tokens CASCADE;
 truncate table admin cascade;
+truncate table agents cascade;
+truncate table address cascade;
 
+INSERT INTO address (id, street_name, city, zip_code, postal_code)
+VALUES (60, 'Some Street', 'Some City', '12345', '67890');
+
+INSERT INTO agents (username, agent_id, password, phone_number, email, address_id, time_created, time_updated)
+VALUES ('Agent1', 2,'password123', '08012345678', 'agent1@gmail.com', 60, '2024-07-04T15:03:03.792009700', '2024-09-04T15:03:03.792009700');
 insert into address(id, city, postal_code, street_name, zip_code) values
                                                                       (100, 'lagos', '3333', 'street name', '55555'),
                                                                       (101, 'ikeja', '222', 'street name2', '77777');
@@ -24,7 +31,9 @@ insert into waste(waste_id, user_id, agent_id, price, quantity, type, url, time_
                                                                                                            (600, 2, 6, 700.00, '10kg', 'PLASTIC', 'https://www.cloudinary.com/waste3', '2024-07-04T15:03:03.792009700', '2024-07-04T15:03:03.792009700');
 insert into admin(id, admin_email, admin_password, username, time_created, time_updated) values
                                                                                                               (300, 'admin@gmail.com', 'pass', 'username', '2024-07-13T14:02:27.425305100Z', '2024-07-13T14:02:27.434315200');
+--
+insert into payment_pay_stack(id, user_id, reference, amount, gateway_response, paid_at, created_at, channel, currency, ip_address, pricing_plan_type, time_created) values
 
-insert into payment_pay_stack(id, user_user_id, reference, amount, gateway_response, paid_at, created_at, channel, currency, ip_address, pricing_plan_type, time_created) values
+
                                                                                                                                                                         (1, 10, 'pay_12345', 100.00, 'Success', '2024-07-04T15:03:03.792009700', '2024-07-01 10:05:00', 'card', 'NGN', '192.168.0.1', 'PAYMENT', '2024-07-01 10:05:00'),
                                                                                                                                                                         (2, 20, 'pay_67890', 250.50, 'Success', '2024-07-04T15:06:03.792009700', '2024-07-01 11:10:00', 'bank', 'NGN', '192.168.0.2', 'PAYMENT', '2024-07-01 11:10:00')
