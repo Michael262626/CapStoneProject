@@ -98,12 +98,12 @@ public class UserServiceImpl implements UserService {
     }
 
     public static String validatePhoneNumber(String phoneNumber) {
-        if (!phoneNumber.matches(
-                "^(\\+?\\d{1,3}[-.\\s]?\\(?\\d{1,4}?\\)?[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9})$")) {
+        if (!phoneNumber.matches("^(\\+234|234|0)(70[1-9]|80[2-9]|81[0-9]|90[1-9])\\d{7}$")) {
             throw new UserDetailsCannotBeNullOrEmpty("Invalid phone number format");
         }
         return phoneNumber;
     }
+
 
     public static String validatePassword(String password) {
         if (!password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")) {
