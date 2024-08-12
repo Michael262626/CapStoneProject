@@ -10,6 +10,7 @@ import com.africa.semiclon.capStoneProject.dtos.response.SendWasteDetailResponse
 import com.africa.semiclon.capStoneProject.exception.AgentExistAlreadyException;
 import com.africa.semiclon.capStoneProject.dtos.response.UpdateAgentProfileResponse;
 import com.africa.semiclon.capStoneProject.exception.AgentNotFoundException;
+import com.africa.semiclon.capStoneProject.response.CollectWasteResponse;
 import com.africa.semiclon.capStoneProject.services.interfaces.AgentService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,12 +103,20 @@ public class AgentServiceImplementationTest {
         assertThrows(AgentNotFoundException.class,()->agentService.updateProfile(request));
     }
 
-//    @Test
-//    public void testThatAgentCanCollectWasteFromUser() {
-//        CollectWasteRequest request = new CollectWasteRequest();
-//        request.set
-//
-//    }
+    @Test
+    public void testThatAgentCanCollectWasteFromUser() {
+        CollectWasteRequest request = new CollectWasteRequest();
+        request.setWasteCategory(PLASTIC);
+        request.setUsername("user");
+        request.setUserId(10L);
+        request.setWasteWeigh(10.5);
+        request.setAgentId(107L);
+        CollectWasteResponse response = agentService.collectWaste(request);
+        assertThat(response).isNotNull();
+        assertThat(response.getMessage()).contains("Waste collected successfully");
+
+
+    }
 
 
 }

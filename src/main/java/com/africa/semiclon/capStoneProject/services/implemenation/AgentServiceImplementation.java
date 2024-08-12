@@ -101,16 +101,23 @@ public class AgentServiceImplementation implements AgentService {
         Agent agent = modelMapper.map(collectWasteRequest, WasteCollection.class).getAgentId();
         agentRepository.save(agent);
         CollectWasteResponse response = new CollectWasteResponse();
-        response.setMessage("waste collected successfully");
+        response.setMessage("Waste collected successfully");
         response.setWasteWeigh(collectWasteRequest.getWasteWeigh());
         response.setWasteCategory(collectWasteRequest.getWasteCategory());
         response.setAgentId(collectWasteRequest.getAgentId());
         response.setUserName(collectWasteRequest.getUsername());
-        response.setUserId(response.getUserId());
+        response.setUserId(collectWasteRequest.getUserId());
         return response;
-
     }
 
+    public void startWeighingProcess(String portName, CollectWasteRequest collectWasteRequest) {
+        ScaleReader reader = new ScaleReader();
+        reader.readFromScale(portName, weight -> {
+            collectWasteRequest.setWasteWeigh(Double.valueOf(weight));
+            CollectWasteResponse response = collectWaste(collectWasteRequest);
+            response.setMessage("Waste weigh collected successfully");
+        });
+    }
 
     private void verifyAgentExistence(String email) {
         Agent agent = agentRepository.findByEmail(email);
@@ -137,13 +144,14 @@ public class AgentServiceImplementation implements AgentService {
 
     }
 
-    public void startWeighingProcess(String portName) {
-        ScaleReader reader = new ScaleReader();
-        reader.readFromScale(portName, weight -> {
-            SendWasteDetailRequest request = new SendWasteDetailRequest();
-            sendWasteDetails(request);
-        });
+    public void initiateWasteCollection(String portName) {
+        CollectWasteRequest request = new CollectWasteRequest();
+        // Set other fields of the request as needed
+        startWeighingProcess(portName, request);
     }
+
+
+
 }
 
 

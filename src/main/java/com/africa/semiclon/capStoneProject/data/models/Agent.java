@@ -30,7 +30,7 @@ public class Agent {
     private Set<Authority> authorities;
     private String password;
     private String phoneNumber;
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String email;
     @OneToOne
     private Address addressId;
