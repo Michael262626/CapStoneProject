@@ -14,7 +14,13 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 public class CustomAuthenticationProvider implements AuthenticationProvider {
-    private final UserDetailsService userDetailsService;
+
+
+
+
+    private UserDetailsService userDetailsService;
+
+
     private PasswordEncoder passwordEncoder;
 
 

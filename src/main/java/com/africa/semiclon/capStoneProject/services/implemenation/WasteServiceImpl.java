@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+import static com.africa.semiclon.capStoneProject.data.models.Category.PLASTIC;
+
 @Service
 @Slf4j
 @AllArgsConstructor
@@ -31,6 +33,7 @@ public class WasteServiceImpl implements WasteService {
         User user= userService.getById(request.getUserId());
 
         try{
+
             Uploader uploader = cloudinary.uploader();
             Map<?,?> response = uploader.upload(request.getMediaFile().getBytes(), ObjectUtils.asMap("resource_type", "auto"));
             log.info("cloudinary upload response:: {}", response);
