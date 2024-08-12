@@ -13,6 +13,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+
+
 import static com.africa.semiclon.capStoneProject.utils.TestUtils.buildUploadWasteRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,7 +26,7 @@ public class WasteServiceTest {
 
     @Test
     public void testToUploadWaste(){
-        String fileLocation = "C:\\Users\\User\\Desktop\\CapStoneProject\\src\\main\\resources\\static\\download (2).jpeg";
+        String fileLocation = "C:\\Users\\User\\Desktop\\CapStoneProject\\src\\main\\resources\\static\\download waste .jpeg";
         Path path = Paths.get(fileLocation);
         try (var inputStream = Files.newInputStream(path)) {
             UploadWasteRequest request = buildUploadWasteRequest(inputStream);

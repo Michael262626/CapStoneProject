@@ -28,7 +28,7 @@ public class TestUtils {
         request.setRole(USER);
         return request;
     }
-    public static UploadWasteRequest buildUploadWasteRequest(InputStream inputStream) throws IOException, IOException {
+    public static UploadWasteRequest buildUploadWasteRequest(InputStream inputStream) throws  IOException {
         UploadWasteRequest request = new UploadWasteRequest();
         MultipartFile file = new MockMultipartFile("waste", inputStream);
         request.setMediaFile(file);
