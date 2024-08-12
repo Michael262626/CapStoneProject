@@ -5,11 +5,12 @@ truncate table blacklisted_tokens CASCADE;
 truncate table admin cascade;
 truncate table agents cascade;
 truncate table address cascade;
+truncate table waste cascade;
 
 INSERT INTO address (id, street_name, city, zip_code, postal_code)
 VALUES (60, 'Some Street', 'Some City', '12345', '67890');
 
-INSERT INTO agents (username, agent_id, password, phone_number, email, address_id, time_created, time_updated)
+INSERT INTO agents (username, id, password, phone_number, email, address_id_id, time_created, time_updated)
 VALUES ('Agent1', 2,'password123', '08012345678', 'agent1@gmail.com', 60, '2024-07-04T15:03:03.792009700', '2024-09-04T15:03:03.792009700');
 insert into address(id, city, postal_code, street_name, zip_code) values
                                                                       (100, 'lagos', '3333', 'street name', '55555'),

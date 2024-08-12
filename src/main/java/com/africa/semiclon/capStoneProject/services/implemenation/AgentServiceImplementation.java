@@ -137,13 +137,13 @@ public class AgentServiceImplementation implements AgentService {
 
     }
 
-    public void startWeighingProcess(String portName) {
-        ScaleReader reader = new ScaleReader();
-        reader.readFromScale(portName, weight -> {
-            SendWasteDetailRequest request = new SendWasteDetailRequest();
-            sendWasteDetails(request);
-        });
-    }
+//    public void startWeighingProcess(String portName) {
+//        ScaleReader reader = new ScaleReader();
+//        reader.readFromScale(portName, weight -> {
+//            SendWasteDetailRequest request = new SendWasteDetailRequest();
+//            sendWasteDetails(request);
+//        });
+//    }
 }
 
 

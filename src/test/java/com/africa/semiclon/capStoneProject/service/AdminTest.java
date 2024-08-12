@@ -10,7 +10,6 @@ import com.africa.semiclon.capStoneProject.services.interfaces.AdminService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
@@ -82,7 +81,7 @@ public class AdminTest {
     @Test
     public void testGenerateWasteReport(){
         Agent agent = new Agent();
-        agent.setAgentId(2L);
+        agent.setId(2L);
         agent.setUsername("Agent1");
         Waste waste1 = new Waste();
         waste1.setWasteId(1L);
@@ -147,7 +146,6 @@ public class AdminTest {
         registerRequest.setUsername("agent001");
         registerRequest.setEmail("agent001@example.com");
         registerRequest.setPassword("password123");
-        registerRequest.setFirstName("AgentOne");
         registerRequest.setPhoneNumber("08034589034");
         RegisterAgentResponse response = adminService.registerAgent(registerRequest);
         assertThat(response).isNotNull();
@@ -178,7 +176,7 @@ public class AdminTest {
         assertThat(savedWaste.getQuantity()).isEqualTo("9kg");
         assertThat(savedWaste.getPrice()).isEqualTo(BigDecimal.valueOf(200.00).setScale(2));
         assertThat(savedWaste.getDescription()).isEqualTo("High-quality recycled plastic");
-        assertThat(savedWaste.getAgent().getAgentId()).isEqualTo(2L);
+        assertThat(savedWaste.getAgent().getId()).isEqualTo(2L);
     }
 
 
