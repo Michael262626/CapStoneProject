@@ -31,6 +31,8 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
     private String username;
+    private String verificationToken;
+    private Boolean verified;
     @Column(unique = true)
     private String email;
     private String password;

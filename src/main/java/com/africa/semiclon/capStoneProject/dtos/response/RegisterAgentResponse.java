@@ -8,5 +8,7 @@ import lombok.Setter;
 public class RegisterAgentResponse {
     private String message;
     private Long agentId;
-
+    private String email;
+    private Long id;
+    private String username;
 }

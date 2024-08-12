@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 import static jakarta.persistence.GenerationType.AUTO;
 import static java.time.LocalDateTime.now;
@@ -23,7 +25,12 @@ public class Agent {
     @GeneratedValue(strategy = AUTO)
     private Long agentId;
     private String username;
+    @ElementCollection
+    @Enumerated(EnumType.STRING)
+    private Set<Authority> authorities;
     private String password;
+    private String verificationToken;
+    private Boolean verified;
     private String phoneNumber;
     @Column(unique = true, nullable = false)
     private String email;

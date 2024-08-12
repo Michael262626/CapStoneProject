@@ -1,5 +1,6 @@
 package com.africa.semiclon.capStoneProject.dtos.request;
 
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,5 +12,6 @@ public class RegisterAgentRequest {
     private String password;
     private String email;
     private String phoneNumber;
+
 
 }
