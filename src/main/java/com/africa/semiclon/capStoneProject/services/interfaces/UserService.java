@@ -1,6 +1,8 @@
 package com.africa.semiclon.capStoneProject.services.interfaces;
 
 import com.africa.semiclon.capStoneProject.data.models.User;
+
+
 import com.africa.semiclon.capStoneProject.dtos.request.CreateUserRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.SellWasteRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.UpdateUserRequest;
@@ -17,4 +19,5 @@ public interface UserService {
     UpdateUserResponse updateProfile(UpdateUserRequest updateUserRequest);
 
     SellWasteResponse sellWaste(SellWasteRequest sellWasteRequest);
+
 }
