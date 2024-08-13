@@ -8,6 +8,8 @@ import com.africa.semiclon.capStoneProject.dtos.response.CreateUserResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.SellWasteResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.UpdateUserResponse;
 
+import java.util.List;
+
 public interface UserService {
     
     User getById(long l);
@@ -17,4 +19,6 @@ public interface UserService {
     UpdateUserResponse updateProfile(UpdateUserRequest updateUserRequest);
 
     SellWasteResponse sellWaste(SellWasteRequest sellWasteRequest);
+
+    List<User> getAllUsers();
 }

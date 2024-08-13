@@ -16,7 +16,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -39,6 +39,11 @@ public class SecurityConfig {
                 .addFilterBefore(authorizationFilter, CustomUsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(POST,"/api/v1/auth/**").permitAll()
+                        .requestMatchers(PUT,"/api/v1/users/update").permitAll()
+                        .requestMatchers(POST,"/api/v1/users/sellWaste").permitAll()
+                        .requestMatchers(GET,"/api/v1/users/{id}").permitAll()
+                        .requestMatchers(POST,"/api/v1/users/register").permitAll()
+                        .requestMatchers(GET,"/api/v1/users/allUsers").permitAll()
                         .requestMatchers("/api/v1/user/admin").hasAnyAuthority("ADMIN", "AGENT")
                         .requestMatchers("/api/payments/**").permitAll()
                         .anyRequest().authenticated()
