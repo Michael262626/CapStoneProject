@@ -1,12 +1,9 @@
 package com.africa.semiclon.capStoneProject.services.implemenation;
 
-import com.africa.semiclon.capStoneProject.data.models.User;
-import com.africa.semiclon.capStoneProject.data.repository.UserRepository;
-import com.africa.semiclon.capStoneProject.exception.UserNotFoundException;
-import com.africa.semiclon.capStoneProject.services.interfaces.UserService;
-import org.springframework.stereotype.Service;
 import com.africa.semiclon.capStoneProject.data.models.Authority;
+import com.africa.semiclon.capStoneProject.data.models.User;
 import com.africa.semiclon.capStoneProject.data.models.Waste;
+import com.africa.semiclon.capStoneProject.data.repository.UserRepository;
 import com.africa.semiclon.capStoneProject.data.repository.WasteRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.CreateUserRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.SellWasteRequest;
@@ -14,9 +11,11 @@ import com.africa.semiclon.capStoneProject.dtos.request.UpdateUserRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.CreateUserResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.SellWasteResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.UpdateUserResponse;
-import com.africa.semiclon.capStoneProject.exception.UsernameExistsException;
+import com.africa.semiclon.capStoneProject.exception.*;
+import com.africa.semiclon.capStoneProject.services.interfaces.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,28 +25,46 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
-    private final WasteRepository wasteRepository;
-    private final ModelMapper modelMapper;
-    private final PasswordEncoder passwordEncoder;
+
+        private final UserRepository userRepository;
+        private final WasteRepository wasteRepository;
+        private final ModelMapper modelMapper;
+        private final PasswordEncoder passwordEncoder;
 
     public UserServiceImpl(UserRepository userRepository, WasteRepository wasteRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.wasteRepository = wasteRepository;
-        this.modelMapper = modelMapper;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-
+            this.userRepository = userRepository;
+            this.wasteRepository = wasteRepository;
+            this.modelMapper = modelMapper;
+            this.passwordEncoder = passwordEncoder;
+        }
         @Override
         public CreateUserResponse register (CreateUserRequest createUserRequest){
-            if (userRepository.existsByEmail(createUserRequest.getEmail())) {throw new UsernameExistsException("Username already exists: " + createUserRequest.getEmail());}
+            validateEmptyString(createUserRequest);
+
+            if (userRepository.existsByEmail(createUserRequest.getEmail())) {
+            throw new EmailExistsException("Email already exists: " + createUserRequest.getEmail());}
+            if (userRepository.existsByUsername(createUserRequest.getUsername())) {
+            throw new UsernameExistsException("Username already exists: " + createUserRequest.getUsername());}
+            if (userRepository.existsByPhoneNumber(createUserRequest.getPhoneNumber())) {
+            throw new PhoneNumberExistsException("Phone number already exists: " + createUserRequest.getPhoneNumber());}
             User newUser = validateUserDetails(createUserRequest);
             newUser = userRepository.save(newUser);
             var response = modelMapper.map(newUser, CreateUserResponse.class);
             response.setMessage("user registered successfully");
             return response;
         }
+
+    private static void validateEmptyString(CreateUserRequest createUserRequest) {
+        if (isEmptyOrNullString(createUserRequest.getEmail())) {throw new UserDetailsCannotBeNullOrEmpty("Email cannot be null or empty");}
+        if (isEmptyOrNullString(createUserRequest.getUsername())) {throw new UserDetailsCannotBeNullOrEmpty("Username cannot be null or empty");}
+        if (isEmptyOrNullString(createUserRequest.getPhoneNumber())) {throw new UserDetailsCannotBeNullOrEmpty("Email cannot be null or empty");}
+        if (isEmptyOrNullString(createUserRequest.getPassword())) {throw new UserDetailsCannotBeNullOrEmpty("Email cannot be null or empty");}
+    }
+
+    public static boolean isEmptyOrNullString(String str) {
+        return str == null || str.isEmpty() || str.isBlank();
+    }
+
 
     private User validateUserDetails(CreateUserRequest createUserRequest) {
         User newUser = modelMapper.map(createUserRequest, User.class);
@@ -80,11 +97,10 @@ public class UserServiceImpl implements UserService {
     }
 
     private void checkAndSetWasteForUsers(SellWasteRequest sellWasteRequest, User user, Waste waste) {
-        List<Waste> wastes = user.getWastes();
-        if (wastes == null) wastes = new ArrayList<>();
-        wastes.add(waste);
-        user.setWastes(wastes);
-        user.setTotalWaste(user.getTotalWaste().add(BigDecimal.valueOf((sellWasteRequest.getWasteWeight()))));
+        wasteRepository.findById(user.getUserId());
+        String wastes = sellWasteRequest.getQuantity();
+        if (wastes == null) wastes = String.valueOf(new ArrayList<>());
+        waste.setQuantity(wastes);
         userRepository.save(user);
     }
 
@@ -119,7 +135,6 @@ public class UserServiceImpl implements UserService {
     public User getById(long id) {
         return userRepository.findById(id).
                 orElseThrow(() -> new UserNotFoundException(
-
                         String.format("user with id %d not found", id)));
 
     }

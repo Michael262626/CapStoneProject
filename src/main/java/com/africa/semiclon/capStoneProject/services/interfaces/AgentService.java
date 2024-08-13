@@ -5,7 +5,7 @@ import com.africa.semiclon.capStoneProject.dtos.request.*;
 import com.africa.semiclon.capStoneProject.dtos.response.RegisterAgentResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.SendWasteDetailResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.UpdateAgentProfileResponse;
-import com.africa.semiclon.capStoneProject.response.CollectWasteResponse;
+import com.africa.semiclon.capStoneProject.exception.CollectWasteResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,4 +24,7 @@ public interface AgentService {
 
     CollectWasteResponse collectWaste(CollectWasteRequest collectWasteRequest);
 
+    void initiateWasteCollection(String portName);
+
+    void startWeighingProcess(String portName, CollectWasteRequest request);
 }

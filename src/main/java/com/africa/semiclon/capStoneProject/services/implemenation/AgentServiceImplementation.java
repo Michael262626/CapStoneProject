@@ -14,7 +14,7 @@ import com.africa.semiclon.capStoneProject.exception.AgentExistAlreadyException;
 import com.africa.semiclon.capStoneProject.exception.AgentNotFoundException;
 import com.africa.semiclon.capStoneProject.exception.InvalidEmailFormatException;
 import com.africa.semiclon.capStoneProject.exception.InvalidPasswordFormatException;
-import com.africa.semiclon.capStoneProject.response.CollectWasteResponse;
+import com.africa.semiclon.capStoneProject.exception.CollectWasteResponse;
 import com.africa.semiclon.capStoneProject.security.services.interfaces.AuthServices;
 import com.africa.semiclon.capStoneProject.services.ScaleReader;
 import com.africa.semiclon.capStoneProject.services.interfaces.AgentService;

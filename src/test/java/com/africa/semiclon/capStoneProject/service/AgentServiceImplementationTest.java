@@ -3,14 +3,12 @@ package com.africa.semiclon.capStoneProject.service;
 import com.africa.semiclon.capStoneProject.data.models.Address;
 import com.africa.semiclon.capStoneProject.dtos.request.CollectWasteRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.RegisterAgentRequest;
-import com.africa.semiclon.capStoneProject.dtos.request.SendWasteDetailRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.UpdateAgentProfileRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.RegisterAgentResponse;
-import com.africa.semiclon.capStoneProject.dtos.response.SendWasteDetailResponse;
 import com.africa.semiclon.capStoneProject.exception.AgentExistAlreadyException;
 import com.africa.semiclon.capStoneProject.dtos.response.UpdateAgentProfileResponse;
 import com.africa.semiclon.capStoneProject.exception.AgentNotFoundException;
-import com.africa.semiclon.capStoneProject.response.CollectWasteResponse;
+import com.africa.semiclon.capStoneProject.exception.CollectWasteResponse;
 import com.africa.semiclon.capStoneProject.services.interfaces.AgentService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,6 +114,29 @@ public class AgentServiceImplementationTest {
         assertThat(response.getMessage()).contains("Waste collected successfully");
 
 
+    }
+
+    @Test
+    public void testWasteCanBeCollectedByAgent() {
+
+        String portName = "COM1";
+        CollectWasteRequest request = new CollectWasteRequest();
+        request.setAgentId(107L);
+        request.setUsername("user");
+        request.setUserId(10L);
+
+        agentService.initiateWasteCollection(portName);
+
+        agentService.startWeighingProcess(portName, request);
+        request.setWasteWeigh(50.0);
+        CollectWasteResponse response = agentService.collectWaste(request);
+
+        assertThat(response.getMessage()).isEqualTo("Waste collected successfully");
+        assertThat(response.getWasteWeigh()).isEqualTo(50.0);
+        assertThat(response.getWasteCategory()).isEqualTo(PLASTIC);
+        assertThat(response.getAgentId()).isEqualTo(107L);
+        assertThat(response.getUserName()).isEqualTo("user");
+        assertThat(response.getUserId()).isEqualTo(10L);
     }
 
 

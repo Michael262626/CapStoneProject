@@ -12,5 +12,4 @@ public class SellWasteRequest {
     private Long userId;
     private Category type;
     private String quantity;
-    private int wasteWeight;
 }

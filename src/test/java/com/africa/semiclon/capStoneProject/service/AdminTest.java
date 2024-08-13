@@ -7,10 +7,13 @@ import com.africa.semiclon.capStoneProject.data.repository.WasteRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.*;
 import com.africa.semiclon.capStoneProject.dtos.response.*;
 import com.africa.semiclon.capStoneProject.services.interfaces.AdminService;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.access.method.P;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
@@ -21,8 +24,8 @@ import static com.africa.semiclon.capStoneProject.data.models.Category.POLYTHENE
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@Sql(scripts = {"/db/data.sql"})
 @SpringBootTest
+@Sql(scripts = {"/db/data.sql"})
 public class AdminTest {
     @Autowired
     private AdminService adminService;
@@ -33,35 +36,6 @@ public class AdminTest {
     @Autowired
     private WasteRepository wasteRepository;
 
-
-    @BeforeEach
-    public void setUp() {
-        userRepository.deleteAll();
-        Agent agent = new Agent();
-        agent.setId(1L);
-        agent.setUsername("Agent");
-        agentRepository.save(agent);
-
-        Agent agent1 = new Agent();
-        agent1.setId(2L);
-        agent1.setUsername("Agent");
-        agentRepository.save(agent1);
-
-        Waste waste1 = new Waste();
-        waste1.setType(PLASTIC);
-        waste1.setQuantity("10kg");
-        waste1.setPrice(BigDecimal.valueOf(500.00));
-        waste1.setAgent(agent);
-        waste1.setWasteCollectionDate(LocalDateTime.now().minusDays(1));
-        wasteRepository.save(waste1);
-
-        Waste waste2 = new Waste();
-        waste2.setType(POLYTHENEBAG);
-        waste2.setQuantity("5kg");
-        waste2.setPrice(BigDecimal.valueOf(200.00));
-        waste2.setWasteCollectionDate(LocalDateTime.now().minusDays(2));
-        wasteRepository.save(waste2);
-    }
 
     @Test
     public void testAdminCanManageMultipleUsers() {
@@ -111,9 +85,22 @@ public class AdminTest {
 
     @Test
     public void testGenerateWasteReport(){
+        Agent agent = new Agent();
+        agent.setAgentId(2L);
+        agent.setUsername("Agent1");
+        Waste waste1 = new Waste();
+        waste1.setWasteId(1L);
+        waste1.setType(PLASTIC);
+        waste1.setQuantity("10kg");
+        waste1.setPrice(BigDecimal.valueOf(100));
+        waste1.setWasteCollectionDate(LocalDateTime.now().minusDays(2));
+        waste1.setAgent(agent);
+        wasteRepository.save(waste1);
+
         GenerateWasteReportRequest request = new GenerateWasteReportRequest();
         request.setStartDate(LocalDateTime.now().minusDays(5));
         request.setEndDate(LocalDateTime.now());
+
         WasteReportResponse response = adminService.generateWasteReport(request);
 
         assertThat(response).isNotNull();
@@ -121,9 +108,8 @@ public class AdminTest {
         assertThat(response.getMessage()).isEqualTo("Report generated successfully");
 
         WasteReport reportItem = response.getReportItems().getFirst();
-        assertThat(reportItem.getCategory());
         assertThat(reportItem.getQuantity()).isEqualTo("10kg");
-        assertThat(reportItem.getAssignedAgent()).isEqualTo("Agent");
+        assertThat(reportItem.getAssignedAgent()).isEqualTo("Agent1");
 
     }
 
@@ -149,13 +135,13 @@ public class AdminTest {
         user.setEmail("testuser@example.com");
         user.setPassword("password123");
         userRepository.save(user);
-        User savedUser = userRepository.findById(user.getId()).orElse(null);
+        User savedUser = userRepository.findById(user.getUserId()).orElse(null);
         assertThat(savedUser).isNotNull();
         DeleteUserRequest deleteRequest = new DeleteUserRequest();
-        deleteRequest.setUserId(user.getId());
+        deleteRequest.setUserId(user.getUserId());
 
         adminService.deleteUser(deleteRequest);
-        User deletedUser = userRepository.findById(user.getId()).orElse(null);
+        User deletedUser = userRepository.findById(user.getUserId()).orElse(null);
         assertThat(deletedUser).isNull();
     }
 
@@ -165,6 +151,7 @@ public class AdminTest {
         registerRequest.setUsername("agent001");
         registerRequest.setEmail("agent001@example.com");
         registerRequest.setPassword("password123");
+        registerRequest.setFirstName("AgentOne");
         registerRequest.setPhoneNumber("08034589034");
         RegisterAgentResponse response = adminService.registerAgent(registerRequest);
         assertThat(response).isNotNull();
@@ -195,7 +182,7 @@ public class AdminTest {
         assertThat(savedWaste.getQuantity()).isEqualTo("9kg");
         assertThat(savedWaste.getPrice()).isEqualTo(BigDecimal.valueOf(200.00).setScale(2));
         assertThat(savedWaste.getDescription()).isEqualTo("High-quality recycled plastic");
-        assertThat(savedWaste.getAgent().getId() ).isEqualTo(2L);
+        assertThat(savedWaste.getAgent().getAgentId()).isEqualTo(2L);
     }
 
 

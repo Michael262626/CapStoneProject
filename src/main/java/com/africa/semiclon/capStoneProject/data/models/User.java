@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 
-import static jakarta.persistence.GenerationType.AUTO;
+import static jakarta.persistence.GenerationType.IDENTITY;
 import static java.time.LocalDateTime.now;
 
 @Setter
@@ -27,20 +27,24 @@ import static java.time.LocalDateTime.now;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = AUTO)
-    private Long id;
+    @GeneratedValue(strategy = IDENTITY)
+    @Column(name = "user_id")
+    private Long userId;
     private String username;
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String email;
     private String password;
+    private BigDecimal balance;
     @OneToOne
+    @JoinColumn(name = "address_id")
     private Address address;
     @OneToMany(fetch = FetchType.EAGER)
-    private List<Transaction> transactions;
+    private List<Transaction> transactions = new ArrayList<>();
     @OneToMany(fetch = FetchType.EAGER)
     private List<Waste> wastes = new ArrayList<>();
-    private BigDecimal totalWaste = BigDecimal.ZERO;
     private String phoneNumber;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PaymentPayStack> paymentPayStacks = new ArrayList<>();
     @Setter(AccessLevel.NONE)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -52,6 +56,8 @@ public class User {
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private Set<Authority> authorities;
+    @OneToOne
+    private Points points;
 
     @PrePersist
     private void setTimeCreated(){
