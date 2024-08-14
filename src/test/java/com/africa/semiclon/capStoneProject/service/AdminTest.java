@@ -7,20 +7,14 @@ import com.africa.semiclon.capStoneProject.data.repository.WasteRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.*;
 import com.africa.semiclon.capStoneProject.dtos.response.*;
 import com.africa.semiclon.capStoneProject.services.interfaces.AdminService;
-import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.access.method.P;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
-import static com.africa.semiclon.capStoneProject.data.models.Category.PLASTIC;
-import static com.africa.semiclon.capStoneProject.data.models.Category.POLYTHENEBAG;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
