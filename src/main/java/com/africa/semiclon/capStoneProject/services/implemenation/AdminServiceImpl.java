@@ -140,16 +140,19 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public RegisterWasteResponse registerWasteForSale(RegisterWasteRequest registerWasteRequest) {
-        Agent agent = agentRepository.findById(registerWasteRequest.getAgentId()).orElseThrow(() -> new AgentNotFoundException("Agent not found"));
+        Agent agent = agentRepository.findById(registerWasteRequest.getAgentId())
+                .orElseThrow(() -> new AgentNotFoundException("Agent not found"));
+
         Waste waste = modelMapper.map(registerWasteRequest, Waste.class);
         waste.setAgent(agent);
-        wasteRepository.save(waste);
-        RegisterWasteResponse response = modelMapper.map(waste, RegisterWasteResponse.class);
+
+        Waste savedWaste = wasteRepository.save(waste);
+
+        RegisterWasteResponse response = modelMapper.map(savedWaste, RegisterWasteResponse.class);
         response.setMessage("Waste registered successfully for sale");
-        response.setWasteId(waste.getWasteId());
+        response.setWasteId(savedWaste.getWasteId());
 
         return response;
     }
-
 }
 
