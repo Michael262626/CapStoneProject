@@ -23,13 +23,14 @@ import static java.time.LocalDateTime.now;
 @Getter
 @Entity
 @ToString
+@Table(name = "waste")
 public class Waste {
     @Id
     @GeneratedValue(strategy = AUTO)
     private Long wasteId;
     private Long userId;
     private String url;
-    private Long agentId;
+//    private Long agentId;
     @Enumerated(value = STRING)
     private Category type;
     private BigDecimal price;
@@ -42,11 +43,11 @@ public class Waste {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime timeUpdated;
+    @ManyToOne
+    private User uploader;
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime wasteCollectionDate;
-    @ManyToOne
-    private User uploader;
     @OneToOne
     private Agent agent;
     private String description;

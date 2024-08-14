@@ -25,7 +25,7 @@ public class WasteServiceTest {
 
     @Test
     public void testToUploadWaste(){
-        String fileLocation = "C:\\Users\\User\\Desktop\\CapStoneProject\\src\\main\\resources\\static\\download (2).jpeg";
+        String fileLocation = "C:\\Users\\DELL\\Desktop\\CapStoneProject\\src\\main\\resources\\static\\waste.jpeg";
         Path path = Paths.get(fileLocation);
         try (var inputStream = Files.newInputStream(path)) {
             UploadWasteRequest request = buildUploadWasteRequest(inputStream);

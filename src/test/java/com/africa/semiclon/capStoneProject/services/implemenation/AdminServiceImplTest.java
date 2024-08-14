@@ -35,12 +35,13 @@ class AdminServiceImplTest {
 
     @Test
     void registerAdminThatAlreadyExistsThrowsException() {
-        registerAdmin();
+        //registerAdmin();
         AdminRequest adminRequest =  AdminRequest.builder()
-                .username("username")
+                .username("username1")
                 .email("user@gmail.com")
                 .password("password")
                 .build();
+        adminService.registerAdmin(adminRequest);
         assertThatThrownBy(() -> adminService.registerAdmin(adminRequest))
                 .isInstanceOf(AdminException.class)
                 .hasMessageContaining("Username already exists");

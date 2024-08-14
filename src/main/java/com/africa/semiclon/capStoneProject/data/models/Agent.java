@@ -8,8 +8,10 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static jakarta.persistence.GenerationType.AUTO;
 import static java.time.LocalDateTime.now;
@@ -21,14 +23,17 @@ import static java.time.LocalDateTime.now;
 public class Agent {
     @Id
     @GeneratedValue(strategy = AUTO)
-    private Long agentId;
+    private Long id;
     private String username;
+    @ElementCollection
+    @Enumerated(EnumType.STRING)
+    private Set<Authority> authorities;
     private String password;
     private String phoneNumber;
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String email;
     @OneToOne
-    private Address address;
+    private Address addressId;
     @Setter(AccessLevel.NONE)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -37,6 +42,7 @@ public class Agent {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime timeUpdated;
+
 
     @PrePersist
     private void setTimeCreated(){
