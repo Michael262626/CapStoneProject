@@ -34,7 +34,7 @@ VALUES
     (20, 0.00, 'admin', '4444444', 'michael23@gmail.com', '$2a$10$6rIpDTj3/hiYiHdnzooaWuSjGTZT8C88aIuRlo9Lph./ZY71fsl5S', '2024-07-02 23:41:10.614686', '2024-07-02 23:41:10.614686', 100);
 
 -- Insert data into waste table
-INSERT INTO waste (waste_id, user_id, agent_id_id, price, quantity, type, url, time_created, time_updated)
+INSERT INTO waste (waste_id, user_id, agent_id, price, quantity, type, url, time_created, time_updated)
 VALUES
     (100, 2, 13, 400.00, '10kg', 'PLASTIC', 'https://www.cloudinary.com/waste1', '2024-07-04T15:03:03.792009700', '2024-07-04T15:03:03.792009700'),
     (400, 2, 10, 600.00, '10kg', 'POLYTHENEBAG', 'https://www.cloudinary.com/waste2', '2024-07-04T15:03:03.792009700', '2024-07-04T15:03:03.792009700');

@@ -29,5 +29,5 @@ public interface AgentService {
 
     void startWeighingProcess(String portName, CollectWasteRequest request);
 
-    ViewWasteCollectedResponse viewAllWasteCollected(ViewWasteCollectedRequest request);
+    List<ViewWasteCollectedResponse> viewAllWasteCollected(ViewWasteCollectedRequest request);
 }
