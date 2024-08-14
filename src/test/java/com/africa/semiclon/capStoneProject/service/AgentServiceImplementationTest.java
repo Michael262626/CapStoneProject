@@ -4,16 +4,20 @@ import com.africa.semiclon.capStoneProject.data.models.Address;
 import com.africa.semiclon.capStoneProject.dtos.request.CollectWasteRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.RegisterAgentRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.UpdateAgentProfileRequest;
+import com.africa.semiclon.capStoneProject.dtos.request.ViewWasteCollectedRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.RegisterAgentResponse;
 import com.africa.semiclon.capStoneProject.exception.AgentExistAlreadyException;
 import com.africa.semiclon.capStoneProject.dtos.response.UpdateAgentProfileResponse;
 import com.africa.semiclon.capStoneProject.exception.AgentNotFoundException;
 import com.africa.semiclon.capStoneProject.exception.CollectWasteResponse;
+import com.africa.semiclon.capStoneProject.response.ViewWasteCollectedResponse;
 import com.africa.semiclon.capStoneProject.services.interfaces.AgentService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+
+import java.util.List;
 
 import static com.africa.semiclon.capStoneProject.data.models.Category.PLASTIC;
 import static com.africa.semiclon.capStoneProject.data.models.Category.POLYTHENEBAG;
@@ -143,10 +147,10 @@ public class AgentServiceImplementationTest {
         testWasteCanBeCollectedByAgent();
         ViewWasteCollectedRequest request = new ViewWasteCollectedRequest();
         request.setAgentId(110L);
-        ViewWasteCollectedResponse viewWasteCollectedResponse = agentService.viewAllWasteCollected(request);
+        List<ViewWasteCollectedResponse> viewWasteCollectedResponse = agentService.viewAllWasteCollected(request);
         assertThat(viewWasteCollectedResponse).isNotNull();
-        assertThat(viewWasteCollectedResponse.getMessage()).contains("Viewed successfully");
-        assertThat(request.getWasteCollected().size(2));
+        //assertThat(viewWasteCollectedResponse.getMessage()).contains("Viewed successfully");
+
 
     }
 

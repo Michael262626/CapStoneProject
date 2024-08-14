@@ -3,6 +3,8 @@ package com.africa.semiclon.capStoneProject.services.implemenation;
 import com.africa.semiclon.capStoneProject.data.models.*;
 import com.africa.semiclon.capStoneProject.data.repository.AddressRepository;
 import com.africa.semiclon.capStoneProject.data.repository.AgentRepository;
+import com.africa.semiclon.capStoneProject.data.repository.WasteCollectionRepository;
+import com.africa.semiclon.capStoneProject.data.repository.WasteRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.*;
 import com.africa.semiclon.capStoneProject.dtos.response.RegisterAgentResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.SendWasteDetailResponse;
@@ -12,6 +14,7 @@ import com.africa.semiclon.capStoneProject.exception.AgentNotFoundException;
 import com.africa.semiclon.capStoneProject.exception.InvalidEmailFormatException;
 import com.africa.semiclon.capStoneProject.exception.InvalidPasswordFormatException;
 import com.africa.semiclon.capStoneProject.exception.CollectWasteResponse;
+import com.africa.semiclon.capStoneProject.response.ViewWasteCollectedResponse;
 import com.africa.semiclon.capStoneProject.security.services.interfaces.AuthServices;
 import com.africa.semiclon.capStoneProject.services.ScaleReader;
 import com.africa.semiclon.capStoneProject.services.interfaces.AgentService;
@@ -25,6 +28,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hibernate.Hibernate.map;
 
@@ -36,24 +40,17 @@ public class AgentServiceImplementation implements AgentService {
     private final PasswordEncoder passwordEncoder;
     private final AgentRepository agentRepository;
     private final AddressRepository addressRepository;
+    private final WasteCollectionRepository wasteCollectionRepository;
 
 
-    public AgentServiceImplementation(ModelMapper modelMapper, PasswordEncoder passwordEncoder, AgentRepository agentRepository, AuthServices authServices, AddressRepository addressRepository) {
+
+    public AgentServiceImplementation(ModelMapper modelMapper, PasswordEncoder passwordEncoder, AgentRepository agentRepository, AuthServices authServices, AddressRepository addressRepository, WasteCollectionRepository wasteCollectionRepository) {
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
         this.agentRepository = agentRepository;
         this.addressRepository = addressRepository;
-//        Converter<Agent, Long> agentToLongConverter = context -> context.getSource().getId();
-//        Converter<User, Long> userToLongConverter = context -> context.getSource().getUserId();
-//
-//        this.modelMapper.addMappings(new PropertyMap<CollectWasteRequest, WasteCollection>() {
-//            @Override
-//            protected void configure() {
-//                using(agentToLongConverter).map(source.getAgentId()).setAgentId(null);
-//                using(userToLongConverter).map(source.getUserId()).setUserId(null);
-//                skip().setId(null);
-//            }
-//        });
+
+        this.wasteCollectionRepository = wasteCollectionRepository;
     }
 
     @Override
@@ -133,6 +130,23 @@ public class AgentServiceImplementation implements AgentService {
         });
     }
 
+    @Override
+
+
+        public List<ViewWasteCollectedResponse> viewAllWasteCollected(ViewWasteCollectedRequest request) {
+            List<WasteCollection> collections = wasteCollectionRepository.findByAgentId_Id(request.getAgentId());
+            return collections.stream()
+                    .map(collection -> new ViewWasteCollectedResponse(
+                            collection.getWasteCategory(),
+                            collection.getDateAndTimeCollected(),
+                            collection.getAgentId(),
+                            collection.getWasteWeigh()))
+                            .collect(Collectors.toList());
+        }
+
+
+
+
     private void verifyAgentExistence(String email) {
         Agent agent = agentRepository.findByEmail(email);
         if (agent != null) {
@@ -160,7 +174,6 @@ public class AgentServiceImplementation implements AgentService {
 
     public void initiateWasteCollection(String portName) {
         CollectWasteRequest request = new CollectWasteRequest();
-        // Set other fields of the request as needed
         startWeighingProcess(portName, request);
     }
 
