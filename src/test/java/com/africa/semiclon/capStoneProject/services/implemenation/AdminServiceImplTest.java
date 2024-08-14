@@ -27,7 +27,6 @@ class AdminServiceImplTest {
                 .username("username")
                 .email("user@gmail.com")
                 .password("password")
-                .authority(Collections.singleton(ADMIN))
                 .build();
         var adminResponse = adminService.registerAdmin(adminRequest);
         assertThat(adminResponse).isNotNull();
@@ -41,7 +40,6 @@ class AdminServiceImplTest {
                 .username("username")
                 .email("user@gmail.com")
                 .password("password")
-                .authority(Collections.singleton(ADMIN))
                 .build();
         assertThatThrownBy(() -> adminService.registerAdmin(adminRequest))
                 .isInstanceOf(AdminException.class)

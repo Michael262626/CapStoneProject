@@ -23,12 +23,12 @@ public class TestUtils {
     public static RegisterRequest buildRegisterRequest() {
         RegisterRequest request = new RegisterRequest();
         request.setUsername("username");
-        request.setPhoneNumber("0070000");
+        request.setEmail("michael123@gmail.com");
+        request.setPassword("0664421");
         request.setPassword("password");
-        request.setRole(USER);
         return request;
     }
-    public static UploadWasteRequest buildUploadWasteRequest(InputStream inputStream) throws IOException, IOException {
+    public static UploadWasteRequest buildUploadWasteRequest(InputStream inputStream) throws IOException {
         UploadWasteRequest request = new UploadWasteRequest();
         MultipartFile file = new MockMultipartFile("waste", inputStream);
         request.setMediaFile(file);
@@ -36,5 +36,4 @@ public class TestUtils {
         request.setUserId(10L);
         return request;
     }
-
 }
