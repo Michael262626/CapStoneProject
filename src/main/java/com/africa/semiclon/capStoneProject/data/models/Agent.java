@@ -43,6 +43,7 @@ public class Agent {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime timeUpdated;
 
+
     @PrePersist
     private void setTimeCreated(){
         this.timeCreated= now();

@@ -23,7 +23,7 @@ import static java.time.LocalDateTime.now;
 @Getter
 @Entity
 @ToString
-@Table(name = "wastes")
+@Table(name = "waste")
 public class Waste {
     @Id
     @GeneratedValue(strategy = AUTO)

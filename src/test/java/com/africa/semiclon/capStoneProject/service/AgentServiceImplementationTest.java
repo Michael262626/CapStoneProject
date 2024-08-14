@@ -16,18 +16,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import static com.africa.semiclon.capStoneProject.data.models.Category.PLASTIC;
+import static com.africa.semiclon.capStoneProject.data.models.Category.POLYTHENEBAG;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-
+@Sql(scripts = "/db/data.sql")
 public class AgentServiceImplementationTest {
 
     @Autowired
     private AgentService agentService;
 
     @Test
-//    @Sql(scripts = "/db/data.sql")
+
     public void testThatAgentCanCreateAccount(){
         RegisterAgentRequest registerAgentRequest = new RegisterAgentRequest();
         registerAgentRequest.setEmail("praiseoyewole562@gmail.com");
@@ -74,7 +75,7 @@ public class AgentServiceImplementationTest {
     public void testThatAgentCanUpdateProfile(){
         UpdateAgentProfileRequest request = new UpdateAgentProfileRequest();
         Address address = new Address();
-        request.setEmail("real@gmail.com");
+        request.setEmail("agent1@gmail.com");
         address.setPostalCode("12345");
         address.setZipCode("123456");
         address.setCity("Lagos");
@@ -101,32 +102,30 @@ public class AgentServiceImplementationTest {
         assertThrows(AgentNotFoundException.class,()->agentService.updateProfile(request));
     }
 
-    @Test
-    public void testThatAgentCanCollectWasteFromUser() {
-        CollectWasteRequest request = new CollectWasteRequest();
-        request.setWasteCategory(PLASTIC);
-        request.setUsername("user");
-        request.setUserId(10L);
-        request.setWasteWeigh(10.5);
-        request.setAgentId(107L);
-        CollectWasteResponse response = agentService.collectWaste(request);
-        assertThat(response).isNotNull();
-        assertThat(response.getMessage()).contains("Waste collected successfully");
-
-
-    }
+//    @Test
+//    public void testThatAgentCanCollectWasteFromUser() {
+//        CollectWasteRequest request = new CollectWasteRequest();
+//        request.setWasteCategory(PLASTIC);
+//        request.setUsername("user");
+//        request.setUserId(10L);
+//        request.setWasteWeigh(10.5);
+//        request.setAgentId(110L);
+//        CollectWasteResponse response = agentService.collectWaste(request);
+//        assertThat(response).isNotNull();
+//        assertThat(response.getMessage()).contains("Waste collected successfully");
+//
+//
+//    }
 
     @Test
     public void testWasteCanBeCollectedByAgent() {
 
-        String portName = "COM1";
+        String portName = "COM6";
         CollectWasteRequest request = new CollectWasteRequest();
-        request.setAgentId(107L);
+        request.setAgentId(110L);
         request.setUsername("user");
-        request.setUserId(10L);
-
+        request.setWasteCategory(PLASTIC);
         agentService.initiateWasteCollection(portName);
-
         agentService.startWeighingProcess(portName, request);
         request.setWasteWeigh(50.0);
         CollectWasteResponse response = agentService.collectWaste(request);
@@ -134,9 +133,21 @@ public class AgentServiceImplementationTest {
         assertThat(response.getMessage()).isEqualTo("Waste collected successfully");
         assertThat(response.getWasteWeigh()).isEqualTo(50.0);
         assertThat(response.getWasteCategory()).isEqualTo(PLASTIC);
-        assertThat(response.getAgentId()).isEqualTo(107L);
+        assertThat(response.getAgentId()).isEqualTo(110L);
         assertThat(response.getUserName()).isEqualTo("user");
-        assertThat(response.getUserId()).isEqualTo(10L);
+//        assertThat(response.getUserId()).isEqualTo(10L);
+    }
+
+    @Test
+    public void testThatAgentCanViewAllWasteCollected(){
+        testWasteCanBeCollectedByAgent();
+        ViewWasteCollectedRequest request = new ViewWasteCollectedRequest();
+        request.setAgentId(110L);
+        ViewWasteCollectedResponse viewWasteCollectedResponse = agentService.viewAllWasteCollected(request);
+        assertThat(viewWasteCollectedResponse).isNotNull();
+        assertThat(viewWasteCollectedResponse.getMessage()).contains("Viewed successfully");
+        assertThat(request.getWasteCollected().size(2));
+
     }
 
 

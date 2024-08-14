@@ -1,9 +1,6 @@
 package com.africa.semiclon.capStoneProject.services.implemenation;
 
-import com.africa.semiclon.capStoneProject.data.models.Address;
-import com.africa.semiclon.capStoneProject.data.models.Agent;
-import com.africa.semiclon.capStoneProject.data.models.Authority;
-import com.africa.semiclon.capStoneProject.data.models.WasteCollection;
+import com.africa.semiclon.capStoneProject.data.models.*;
 import com.africa.semiclon.capStoneProject.data.repository.AddressRepository;
 import com.africa.semiclon.capStoneProject.data.repository.AgentRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.*;
@@ -18,13 +15,18 @@ import com.africa.semiclon.capStoneProject.exception.CollectWasteResponse;
 import com.africa.semiclon.capStoneProject.security.services.interfaces.AuthServices;
 import com.africa.semiclon.capStoneProject.services.ScaleReader;
 import com.africa.semiclon.capStoneProject.services.interfaces.AgentService;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
+import org.modelmapper.spi.MappingContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+
+import static org.hibernate.Hibernate.map;
 
 @Service
 public class AgentServiceImplementation implements AgentService {
@@ -41,6 +43,17 @@ public class AgentServiceImplementation implements AgentService {
         this.passwordEncoder = passwordEncoder;
         this.agentRepository = agentRepository;
         this.addressRepository = addressRepository;
+//        Converter<Agent, Long> agentToLongConverter = context -> context.getSource().getId();
+//        Converter<User, Long> userToLongConverter = context -> context.getSource().getUserId();
+//
+//        this.modelMapper.addMappings(new PropertyMap<CollectWasteRequest, WasteCollection>() {
+//            @Override
+//            protected void configure() {
+//                using(agentToLongConverter).map(source.getAgentId()).setAgentId(null);
+//                using(userToLongConverter).map(source.getUserId()).setUserId(null);
+//                skip().setId(null);
+//            }
+//        });
     }
 
     @Override
@@ -98,7 +111,8 @@ public class AgentServiceImplementation implements AgentService {
 
     @Override
     public CollectWasteResponse collectWaste(CollectWasteRequest collectWasteRequest) {
-        Agent agent = modelMapper.map(collectWasteRequest, WasteCollection.class).getAgentId();
+        WasteCollection wasteCollection = modelMapper.map(collectWasteRequest, WasteCollection.class);
+        Agent agent = wasteCollection.getAgentId();
         agentRepository.save(agent);
         CollectWasteResponse response = new CollectWasteResponse();
         response.setMessage("Waste collected successfully");
@@ -106,7 +120,7 @@ public class AgentServiceImplementation implements AgentService {
         response.setWasteCategory(collectWasteRequest.getWasteCategory());
         response.setAgentId(collectWasteRequest.getAgentId());
         response.setUserName(collectWasteRequest.getUsername());
-        response.setUserId(collectWasteRequest.getUserId());
+//        response.setUserId(collectWasteRequest.getUserId());
         return response;
     }
 
