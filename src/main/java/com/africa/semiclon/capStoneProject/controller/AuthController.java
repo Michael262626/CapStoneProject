@@ -1,6 +1,7 @@
 package com.africa.semiclon.capStoneProject.controller;
 
 import com.africa.semiclon.capStoneProject.dtos.request.RegisterRequest;
+import com.africa.semiclon.capStoneProject.exception.UserAlreadyExistsException;
 import com.africa.semiclon.capStoneProject.security.services.interfaces.AuthServices;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
-        return ResponseEntity.status(CREATED).body(authService.register(request));
+        try{
+            return ResponseEntity.status(CREATED).body(authService.register(request));
+        }catch (UserAlreadyExistsException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/logout")
