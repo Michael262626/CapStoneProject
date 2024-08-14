@@ -12,6 +12,7 @@ import com.africa.semiclon.capStoneProject.security.services.interfaces.AuthServ
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -27,6 +28,8 @@ public class AuthServiceImpl implements AuthServices {
 
     private final UserRepository userRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     private final ModelMapper mapper;
 
     private final BlacklistedTokenRepository blacklistedTokenRepository;
@@ -35,13 +38,15 @@ public class AuthServiceImpl implements AuthServices {
     public ApiResponse<RegisterResponse> register(RegisterRequest request) {
         String username = request.getUsername().toLowerCase();
         validate(username);
-        request.setUsername(username);
+        String hashedPassword = passwordEncoder.encode(request.getPassword());
+        request.setPassword(hashedPassword);
+
         User newUser = registerNewUser(request);
         RegisterResponse registerResponse = mapper.map(newUser, RegisterResponse.class);
         registerResponse.setMessage("User registered successfully");
+
         return new ApiResponse<>(now(), true, registerResponse);
     }
-
 
     @Override
     public void blacklist(String token) {

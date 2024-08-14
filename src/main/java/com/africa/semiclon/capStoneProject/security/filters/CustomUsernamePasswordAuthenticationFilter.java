@@ -21,6 +21,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,9 +64,9 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request,
-                                            HttpServletResponse response,
-                                            FilterChain chain, Authentication authResult)
+    public void successfulAuthentication(HttpServletRequest request,
+                                         HttpServletResponse response,
+                                         FilterChain chain, Authentication authResult)
             throws IOException, ServletException {
 
         LoginResponse loginResponse = new LoginResponse();
@@ -102,9 +103,9 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
     }
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request,
-                                              HttpServletResponse response,
-                                              AuthenticationException exception)
+    public void unsuccessfulAuthentication(HttpServletRequest request,
+                                           HttpServletResponse response,
+                                           AuthenticationException exception)
             throws IOException, ServletException {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .requestTime(now())
