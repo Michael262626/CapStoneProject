@@ -17,68 +17,125 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class UserServiceImpl implements UserService {
 
-        private final UserRepository userRepository;
-        private final WasteRepository wasteRepository;
-        private final ModelMapper modelMapper;
-        private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final WasteRepository wasteRepository;
+    private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public UserServiceImpl(UserRepository userRepository, WasteRepository wasteRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
-            this.userRepository = userRepository;
-            this.wasteRepository = wasteRepository;
-            this.modelMapper = modelMapper;
-            this.passwordEncoder = passwordEncoder;
-        }
-        @Override
-        public CreateUserResponse register (CreateUserRequest createUserRequest){
-            validateEmptyString(createUserRequest);
-
-            if (userRepository.existsByEmail(createUserRequest.getEmail())) {
-            throw new EmailExistsException("Email already exists: " + createUserRequest.getEmail());}
-            if (userRepository.existsByUsername(createUserRequest.getUsername())) {
-            throw new UsernameExistsException("Username already exists: " + createUserRequest.getUsername());}
-            if (userRepository.existsByPhoneNumber(createUserRequest.getPhoneNumber())) {
-            throw new PhoneNumberExistsException("Phone number already exists: " + createUserRequest.getPhoneNumber());}
-            User newUser = validateUserDetails(createUserRequest);
-            newUser = userRepository.save(newUser);
-            var response = modelMapper.map(newUser, CreateUserResponse.class);
-            response.setMessage("user registered successfully");
-            return response;
-        }
-
-    private static void validateEmptyString(CreateUserRequest createUserRequest) {
-        if (isEmptyOrNullString(createUserRequest.getEmail())) {throw new UserDetailsCannotBeNullOrEmpty("Email cannot be null or empty");}
-        if (isEmptyOrNullString(createUserRequest.getUsername())) {throw new UserDetailsCannotBeNullOrEmpty("Username cannot be null or empty");}
-        if (isEmptyOrNullString(createUserRequest.getPhoneNumber())) {throw new UserDetailsCannotBeNullOrEmpty("Email cannot be null or empty");}
-        if (isEmptyOrNullString(createUserRequest.getPassword())) {throw new UserDetailsCannotBeNullOrEmpty("Email cannot be null or empty");}
+        this.userRepository = userRepository;
+        this.wasteRepository = wasteRepository;
+        this.modelMapper = modelMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public static boolean isEmptyOrNullString(String str) {
-        return str == null || str.isEmpty() || str.isBlank();
+    @Override
+    public CreateUserResponse register(CreateUserRequest createUserRequest) {
+        validateRequest(createUserRequest);
+        checkIfUserExists(createUserRequest);
+        User newUser = mapToUser(createUserRequest);
+        newUser = userRepository.save(newUser);
+        return buildCreateUserResponse(newUser);
     }
 
+    private void checkIfUserExists(CreateUserRequest createUserRequest) {
+        if (userRepository.existsByEmail(createUserRequest.getEmail())) {
+            throw new EmailExistsException("Email already exists: " + createUserRequest.getEmail());
+        }
+        if (userRepository.existsByUsername(createUserRequest.getUsername())) {
+            throw new UsernameExistsException("Username already exists: " + createUserRequest.getUsername());
+        }
+        if (userRepository.existsByPhoneNumber(createUserRequest.getPhoneNumber())) {
+            throw new PhoneNumberExistsException("Phone number already exists: " + createUserRequest.getPhoneNumber());
+        }
+    }
 
-    private User validateUserDetails(CreateUserRequest createUserRequest) {
+    private static void validateRequest(CreateUserRequest createUserRequest) {
+        if (isEmptyOrNull(createUserRequest.getEmail())) {
+            throw new UserDetailsCannotBeNullOrEmpty("Email cannot be null or empty");
+        }
+        if (isEmptyOrNull(createUserRequest.getUsername())) {
+            throw new UserDetailsCannotBeNullOrEmpty("Username cannot be null or empty");
+        }
+        if (isEmptyOrNull(createUserRequest.getPhoneNumber())) {
+            throw new UserDetailsCannotBeNullOrEmpty("Phone number cannot be null or empty");
+        }
+        if (isEmptyOrNull(createUserRequest.getPassword())) {
+            throw new UserDetailsCannotBeNullOrEmpty("Password cannot be null or empty");
+        }
+    }
+
+    private static boolean isEmptyOrNull(String str) {
+        return str == null || str.isBlank();
+    }
+
+    private User mapToUser(CreateUserRequest createUserRequest) {
+        validatePasswordAndEmail(createUserRequest);
         User newUser = modelMapper.map(createUserRequest, User.class);
         newUser.setPassword(passwordEncoder.encode(createUserRequest.getPassword()));
         newUser.setAuthorities(new HashSet<>());
-        var authorities = newUser.getAuthorities();
-        authorities.add(Authority.USER);
+        newUser.getAuthorities().add(Authority.USER);
         return newUser;
+    }
+
+    private void validatePasswordAndEmail(CreateUserRequest createUserRequest) {
+        if (!isValidPassword(createUserRequest.getPassword())) {
+            throw new InvalidPasswordException("Password does not meet the required criteria");
+        }
+        if (!isEmailValid(createUserRequest.getEmail())) {
+            throw new InvalidEmailException("Invalid email format");
+        }
+        if (!isPhoneNumberValid(createUserRequest.getPhoneNumber())) {
+            throw new InvalidPhoneNumberException("Invalid phone number format");
+        }
+    }
+
+    private CreateUserResponse buildCreateUserResponse(User user) {
+        CreateUserResponse response = modelMapper.map(user, CreateUserResponse.class);
+        response.setMessage("User registered successfully");
+        return response;
     }
 
     @Override
     public UpdateUserResponse updateProfile(UpdateUserRequest updateUserRequest) {
-        Optional<User> optionalUser = userValidation(updateUserRequest.getUserId());
-        User existingUser = validateUserInfo(updateUserRequest, optionalUser);
+        User existingUser = validateUserAndUpdateInfo(updateUserRequest);
         User updatedUser = userRepository.save(existingUser);
+        return buildUpdateUserResponse(updatedUser);
+    }
+
+    private User validateUserAndUpdateInfo(UpdateUserRequest updateUserRequest) {
+        User existingUser = userRepository.findById(updateUserRequest.getUserId())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        updateUserFields(updateUserRequest, existingUser);
+        return existingUser;
+    }
+
+    private void updateUserFields(UpdateUserRequest updateUserRequest, User existingUser) {
+        if (updateUserRequest.getUsername() != null) {
+            existingUser.setUsername(updateUserRequest.getUsername());
+        }
+        if (updateUserRequest.getEmail() != null) {
+            if (!isEmailValid(updateUserRequest.getEmail())) {
+                throw new InvalidEmailException("Invalid email format");
+            }
+            existingUser.setEmail(updateUserRequest.getEmail());
+        }
+        if (updateUserRequest.getPhoneNumber() != null) {
+            if (!isPhoneNumberValid(updateUserRequest.getPhoneNumber())) {
+                throw new InvalidPhoneNumberException("Invalid phone number format");
+            }
+            existingUser.setPhoneNumber(updateUserRequest.getPhoneNumber());
+        }
+    }
+
+    private UpdateUserResponse buildUpdateUserResponse(User updatedUser) {
         UpdateUserResponse response = modelMapper.map(updatedUser, UpdateUserResponse.class);
         response.setMessage("Profile updated successfully");
         return response;
@@ -86,24 +143,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SellWasteResponse sellWaste(SellWasteRequest sellWasteRequest) {
-        Optional<User> optionalUser = userValidation(sellWasteRequest.getUserId());
-        User user = optionalUser.get();
-        Waste waste = getWasteDetails(sellWasteRequest);
-        checkAndSetWasteForUsers(sellWasteRequest, user, waste);
-        SellWasteResponse response = new SellWasteResponse();
-        response.setMessage("Waste sold successfully");
-        return response;
+        User user = validateUser(sellWasteRequest.getUserId());
+        Waste waste = buildWaste(sellWasteRequest);
+        assignWasteToUser(user, waste);
+        return buildSellWasteResponse();
     }
 
-    private void checkAndSetWasteForUsers(SellWasteRequest sellWasteRequest, User user, Waste waste) {
-        wasteRepository.findById(user.getUserId());
-        String wastes = sellWasteRequest.getQuantity();
-        if (wastes == null) wastes = String.valueOf(new ArrayList<>());
-        waste.setQuantity(wastes);
-        userRepository.save(user);
+    private User validateUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with id %d not found", userId)));
     }
 
-    private Waste getWasteDetails(SellWasteRequest sellWasteRequest) {
+    private Waste buildWaste(SellWasteRequest sellWasteRequest) {
         Waste waste = new Waste();
         waste.setUserId(sellWasteRequest.getUserId());
         waste.setType(sellWasteRequest.getType());
@@ -112,30 +163,23 @@ public class UserServiceImpl implements UserService {
         return waste;
     }
 
-    private Optional<User> userValidation(Long sellWasteRequest) {
-        Optional<User> optionalUser = userRepository.findById(sellWasteRequest);
-        if (optionalUser.isEmpty()) {
-            throw new UserNotFoundException(String.format("User with id %d not found", sellWasteRequest));
-        }
-        return optionalUser;
+    private void assignWasteToUser(User user, Waste waste) {
+        wasteRepository.findById(user.getUserId());
+        String wasteQuantity = waste.getQuantity();
+        waste.setQuantity(wasteQuantity == null ? "" : wasteQuantity);
+        userRepository.save(user);
     }
 
-
-    private static User validateUserInfo(UpdateUserRequest updateUserRequest, Optional<User> optionalUser) {
-        User existingUser = optionalUser.get();
-        if (updateUserRequest.getUsername() != null) {existingUser.setUsername(updateUserRequest.getUsername());}
-        if (updateUserRequest.getEmail() != null) {existingUser.setEmail(updateUserRequest.getEmail());}
-        if (updateUserRequest.getPhoneNumber() != null) {existingUser.setPhoneNumber(updateUserRequest.getPhoneNumber());}
-        return existingUser;
+    private SellWasteResponse buildSellWasteResponse() {
+        SellWasteResponse response = new SellWasteResponse();
+        response.setMessage("Waste sold successfully");
+        return response;
     }
-
 
     @Override
     public User getById(long id) {
-        return userRepository.findById(id).
-                orElseThrow(() -> new UserNotFoundException(
-                        String.format("user with id %d not found", id)));
-
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with id %d not found", id)));
     }
 
     @Override
@@ -143,5 +187,15 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
+    public boolean isValidPassword(String password) {
+        return password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$");
     }
 
+    public boolean isEmailValid(String email) {
+        return email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+    }
+
+    public boolean isPhoneNumberValid(String phoneNumber) {
+        return phoneNumber.matches("^(?:\\+?234)?(0[789]\\d{9})$");
+    }
+}

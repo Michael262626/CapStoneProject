@@ -21,4 +21,10 @@ public interface UserService {
     SellWasteResponse sellWaste(SellWasteRequest sellWasteRequest);
 
     List<User> getAllUsers();
+
+    boolean isValidPassword(String password);
+
+    boolean isEmailValid(String email);
+
+    boolean isPhoneNumberValid(String phoneNumber);
 }
