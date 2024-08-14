@@ -39,7 +39,6 @@ public class AdminServiceImpl implements AdminService {
                 .username(registerRequest.getUsername())
                 .adminEmail(registerRequest.getEmail())
                 .adminPassword(registerRequest.getPassword())
-                .authority(registerRequest.getAuthority())
                 .build();
         adminRepository.save(adminToBeRegistered);
         return modelMapper.map(adminToBeRegistered, AdminResponse.class);

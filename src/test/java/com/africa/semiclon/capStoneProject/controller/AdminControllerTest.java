@@ -80,7 +80,6 @@ public class AdminControllerTest {
                         .content("{\"adminId\": \"300\"}"))
                 .andExpect(status().isCreated())
                 .andDo(print());
-
     }
 
     @Test
