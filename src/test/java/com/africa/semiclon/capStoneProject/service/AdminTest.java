@@ -14,7 +14,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
+import static com.africa.semiclon.capStoneProject.data.models.Category.PLASTIC;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -77,36 +79,36 @@ public class AdminTest {
 
     }
 
-//    @Test
-//    public void testGenerateWasteReport() {
-//        Agent agent = new Agent();
-//        agent.setAgentId(2L);
-//        agent.setUsername("Agent1");
-//
-//        Waste waste1 = new Waste();
-//        waste1.setWasteId(1L);
-//        waste1.setType(PLASTIC);
-//        waste1.setQuantity("10kg");
-//        waste1.setPrice(BigDecimal.valueOf(100));
-//        waste1.setWasteCollectionDate(LocalDateTime.now().minusDays(2));
-//        waste1.setAgent(agent);
-//        wasteRepository.save(waste1);
-//
-//        GenerateWasteReportRequest request = new GenerateWasteReportRequest();
-//        request.setStartDate(LocalDateTime.now().minusDays(5));
-//        request.setEndDate(LocalDateTime.now());
-//
-//        WasteReportResponse response = adminService.generateWasteReport(request);
-//
-//        assertThat(response).isNotNull();
-//        assertThat(response.getReportItems()).isNotEmpty();
-//        assertThat(response.getMessage()).isEqualTo("Report generated successfully");
-//
-//
-//        WasteReport reportItem = response.getReportItems().get(0);
-//        assertThat(reportItem.getQuantity()).isEqualTo("10kg");
-//        assertThat(reportItem.getAssignedAgent()).isEqualTo("Agent1");
-//    }
+    @Test
+    public void testGenerateWasteReport() {
+        Agent agent = new Agent();
+        agent.setAgentId(2L);
+        agent.setUsername("Agent1");
+
+        Waste waste1 = new Waste();
+        waste1.setWasteId(1L);
+        waste1.setType(PLASTIC);
+        waste1.setQuantity("10kg");
+        waste1.setPrice(BigDecimal.valueOf(100));
+        waste1.setWasteCollectionDate(LocalDateTime.now().minusDays(2));
+        waste1.setAgent(agent);
+        wasteRepository.save(waste1);
+
+        GenerateWasteReportRequest request = new GenerateWasteReportRequest();
+        request.setStartDate(LocalDateTime.now().minusDays(5));
+        request.setEndDate(LocalDateTime.now());
+
+        WasteReportResponse response = adminService.generateWasteReport(request);
+
+        assertThat(response).isNotNull();
+        assertThat(response.getReportItems()).isNotEmpty();
+        assertThat(response.getMessage()).isEqualTo("Report generated successfully");
+
+
+        WasteReport reportItem = response.getReportItems().get(0);
+        assertThat(reportItem.getQuantity()).isEqualTo("10kg");
+        assertThat(reportItem.getAssignedAgent()).isEqualTo("Agent1");
+    }
 
 
     @Test
@@ -163,7 +165,7 @@ public class AdminTest {
     @Test
     public void AdminCanRegisterWasteForSale(){
         RegisterWasteRequest registerWasteRequest = new RegisterWasteRequest();
-        registerWasteRequest.setType(Category.PLASTIC);
+        registerWasteRequest.setType(PLASTIC);
         registerWasteRequest.setQuantity("9kg");
         registerWasteRequest.setPrice(BigDecimal.valueOf(200.00));
         registerWasteRequest.setDescription("High-quality recycled plastic");
@@ -174,7 +176,7 @@ public class AdminTest {
         assertThat(response.getWasteId()).isNotNull();
         Waste savedWaste = wasteRepository.findById(response.getWasteId()).orElse(null);
         assertThat(savedWaste).isNotNull();
-        assertThat(savedWaste.getType()).isEqualTo(Category.PLASTIC);
+        assertThat(savedWaste.getType()).isEqualTo(PLASTIC);
         assertThat(savedWaste.getQuantity()).isEqualTo("9kg");
         assertThat(savedWaste.getPrice()).isEqualTo(BigDecimal.valueOf(200.00).setScale(2));
         assertThat(savedWaste.getDescription()).isEqualTo("High-quality recycled plastic");

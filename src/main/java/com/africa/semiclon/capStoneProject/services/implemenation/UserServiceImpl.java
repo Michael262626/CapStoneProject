@@ -42,9 +42,9 @@ public class UserServiceImpl implements UserService {
     public CreateUserResponse register(CreateUserRequest createUserRequest) {
         validateCreateUserRequest(createUserRequest);
         checkIfUserExists(createUserRequest);
-        User newUser = mapAndPrepareUser(createUserRequest);
-        newUser = userRepository.save(newUser);
-        CreateUserResponse response = modelMapper.map(newUser, CreateUserResponse.class);
+        User newUser1 = mapAndPrepareUser(createUserRequest);
+        userRepository.save(newUser1);
+        CreateUserResponse response = modelMapper.map(newUser1, CreateUserResponse.class);
         response.setMessage("User registered successfully");
         return response;
     }
@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
 
     public static String validatePhoneNumber(String phoneNumber) {
         if (!phoneNumber.matches(
-                "^(\\+?\\d{1,3}[-.\\s]?\\(?\\d{1,4}?\\)?[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9})$")) {
+                "^(\\+234|0)?[789]\\d{9}$\n")) {
             throw new UserDetailsCannotBeNullOrEmpty("Invalid phone number format");
         }
         return phoneNumber;

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.math.BigDecimal;
@@ -33,6 +34,7 @@ public class TransactionServiceImplTest {
     private TransactionRepository transactionRepository;
 
     @Test
+    @Transactional
     public void testMakePaymentToUser() {
         PaymentRequest request = new PaymentRequest();
         request.setAdminId(300L);
@@ -54,29 +56,30 @@ public class TransactionServiceImplTest {
         assertEquals(BigDecimal.valueOf(10000.00), transaction.getAmount().setScale(1, BigDecimal.ROUND_HALF_UP));
     }
 
-//    @Test
-//    public void testProcessWithdrawal() {
-//        User user = userRepository.findById(10L).orElseThrow();
-//        user.setBalance(BigDecimal.valueOf(500.00));
-//        userRepository.save(user);
-//
-//        WithdrawRequest request = new WithdrawRequest();
-//        request.setUserId(10L);
-//        request.setAmount(BigDecimal.valueOf(100.00));
-//
-//        InitializePaymentResponse initializePaymentResponse = new InitializePaymentResponse();
-//        initializePaymentResponse.setStatus(true);
-//        initializePaymentResponse.setData(new InitializePaymentResponse.Data("pay_67890", "100.00", "NGN"));
-//
-//
-//        transactionService.processWithdrawal(request);
-//
-//        Transaction transaction = transactionRepository.findAll().getFirst();
-//        assertNotNull(transaction);
-//        assertEquals(PricingPlanType.WITHDRAWAL, transaction.getPlanType());
-//        assertEquals(BigDecimal.valueOf(100.00), transaction.getAmount().setScale(1, BigDecimal.ROUND_HALF_UP));
-//
-//        User updatedUser = userRepository.findById(10L).orElseThrow();
-//        assertEquals(BigDecimal.valueOf(400.00), updatedUser.getBalance().setScale(1, BigDecimal.ROUND_HALF_UP));
-//    }
+    @Test
+    @Transactional
+    public void testProcessWithdrawal() {
+        User user = userRepository.findById(10L).orElseThrow();
+        user.setBalance(BigDecimal.valueOf(500.00));
+        userRepository.save(user);
+
+        WithdrawRequest request = new WithdrawRequest();
+        request.setUserId(10L);
+        request.setAmount(BigDecimal.valueOf(100.00));
+
+        InitializePaymentResponse initializePaymentResponse = new InitializePaymentResponse();
+        initializePaymentResponse.setStatus(true);
+        initializePaymentResponse.setData(new InitializePaymentResponse.Data("pay_67890", "100.00", "NGN"));
+
+
+        transactionService.processWithdrawal(request);
+
+        Transaction transaction = transactionRepository.findAll().get(0);
+        assertNotNull(transaction);
+        assertEquals(PricingPlanType.WITHDRAWAL, transaction.getPlanType());
+        assertEquals(BigDecimal.valueOf(100.00), transaction.getAmount().setScale(1, BigDecimal.ROUND_HALF_UP));
+
+        User updatedUser = userRepository.findById(10L).orElseThrow();
+        assertEquals(BigDecimal.valueOf(400.00), updatedUser.getBalance().setScale(1, BigDecimal.ROUND_HALF_UP));
+    }
 }

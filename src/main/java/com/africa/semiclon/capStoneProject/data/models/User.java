@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 
+import static jakarta.persistence.GenerationType.AUTO;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static java.time.LocalDateTime.now;
 
@@ -27,7 +28,7 @@ import static java.time.LocalDateTime.now;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = AUTO)
     @Column(name = "user_id")
     private Long userId;
     private String username;
