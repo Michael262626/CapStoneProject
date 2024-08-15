@@ -1,5 +1,7 @@
 package com.africa.semiclon.capStoneProject.data.models;
 
+import com.africa.semiclon.capStoneProject.data.models.Agent;
+import com.africa.semiclon.capStoneProject.data.models.User;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -9,7 +11,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -41,11 +42,20 @@ public class Waste {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime timeUpdated;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDateTime wasteCollectionDate;
+    @ManyToOne
+    private User uploader;
+    @OneToOne
+    private Agent agent;
+    private String description;
 
     @PrePersist
     private void setTimeCreated(){
         this.timeCreated= now();
     }
+
     @PreUpdate
     private void setTimeUpdated(){
         this.timeUpdated= now();
