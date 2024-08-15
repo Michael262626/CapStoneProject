@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 @Setter
 @Getter
 public class SellWasteRequest {
-    private Long userId;
     private Category type;
-    private String quantity;
+    private int quantity;
 }

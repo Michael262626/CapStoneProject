@@ -36,8 +36,8 @@ VALUES
 -- Insert data into waste table
 INSERT INTO waste (waste_id, user_id, agent_id, price, quantity, type, url, time_created, time_updated)
 VALUES
-    (100, 2, 13, 400.00, '10kg', 'PLASTIC', 'https://www.cloudinary.com/waste1', '2024-07-04T15:03:03.792009700', '2024-07-04T15:03:03.792009700'),
-    (400, 2, 10, 600.00, '10kg', 'POLYTHENEBAG', 'https://www.cloudinary.com/waste2', '2024-07-04T15:03:03.792009700', '2024-07-04T15:03:03.792009700');
+    (100, 2, 13, 400.00, 10, 'PLASTIC', 'https://www.cloudinary.com/waste1', '2024-07-04T15:03:03.792009700', '2024-07-04T15:03:03.792009700'),
+    (400, 2, 10, 600.00, 10, 'POLYTHENEBAG', 'https://www.cloudinary.com/waste2', '2024-07-04T15:03:03.792009700', '2024-07-04T15:03:03.792009700');
 
 
 -- Insert data into admin table

@@ -1,6 +1,6 @@
 package com.africa.semiclon.capStoneProject.services.implemenation;
 
-import com.africa.semiclon.capStoneProject.data.models.Authority;
+import  com.africa.semiclon.capStoneProject.data.models.Authority;
 import com.africa.semiclon.capStoneProject.data.models.User;
 import com.africa.semiclon.capStoneProject.data.models.Waste;
 import com.africa.semiclon.capStoneProject.data.repository.UserRepository;
@@ -11,32 +11,32 @@ import com.africa.semiclon.capStoneProject.dtos.request.UpdateUserRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.CreateUserResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.SellWasteResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.UpdateUserResponse;
+import com.africa.semiclon.capStoneProject.dtos.response.WeightCollectedResponse;
 import com.africa.semiclon.capStoneProject.exception.*;
+import com.africa.semiclon.capStoneProject.security.providers.CustomAuthenticationProvider;
 import com.africa.semiclon.capStoneProject.services.interfaces.UserService;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
+
+    private final CustomAuthenticationProvider customUsernameProvider;
 
         private final UserRepository userRepository;
         private final WasteRepository wasteRepository;
         private final ModelMapper modelMapper;
         private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, WasteRepository wasteRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
-            this.userRepository = userRepository;
-            this.wasteRepository = wasteRepository;
-            this.modelMapper = modelMapper;
-            this.passwordEncoder = passwordEncoder;
-        }
+
         @Override
         public CreateUserResponse register (CreateUserRequest createUserRequest){
             validateEmptyString(createUserRequest);
@@ -87,30 +87,65 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SellWasteResponse sellWaste(SellWasteRequest sellWasteRequest) {
-        Optional<User> optionalUser = userValidation(sellWasteRequest.getUserId());
-        User user = optionalUser.get();
-        Waste waste = getWasteDetails(sellWasteRequest);
-        checkAndSetWasteForUsers(sellWasteRequest, user, waste);
+        validateSellWasteRequest(sellWasteRequest);
+
+        // Fetch the current user (assuming it's done via some security context or session)
+        User user = userRepository.findById(10L).orElseThrow(() -> new IllegalStateException("User not found. Please log in."));
+
+        // Create waste entity based on the request
+        Waste waste = createWasteEntity(sellWasteRequest);
+
+        // Associate waste with the user and save
+        associateWasteWithUser(user, waste);
+
+        // Accumulate the quantity of waste sold by the user
+        accumulateUserWaste(user, waste.getQuantity());
+
+        // Prepare response
         SellWasteResponse response = new SellWasteResponse();
         response.setMessage("Waste sold successfully");
+
         return response;
     }
 
-    private void checkAndSetWasteForUsers(SellWasteRequest sellWasteRequest, User user, Waste waste) {
-        wasteRepository.findById(user.getUserId());
-        String wastes = sellWasteRequest.getQuantity();
-        if (wastes == null) wastes = String.valueOf(new ArrayList<>());
-        waste.setQuantity(wastes);
+    // Helper method to accumulate the waste quantity
+    private void accumulateUserWaste(User user, int soldQuantity) {
+        // Assuming user has a field `totalWeightCollected` to track the accumulated waste
+        int currentTotal = user.getTotalWeightCollected();
+
+        user.setTotalWeightCollected(currentTotal + soldQuantity);
+
         userRepository.save(user);
     }
+    @Override
+    public WeightCollectedResponse getTotalWeightCollectedByUser(User user) {
+        List<Waste> wasteList = user.getWastes();
 
-    private Waste getWasteDetails(SellWasteRequest sellWasteRequest) {
+        int totalWeight = wasteList.stream()
+                .mapToInt(Waste::getQuantity)
+                .sum();
+
+        WeightCollectedResponse response = new WeightCollectedResponse();
+        response.setWeight(totalWeight);
+        return response;
+    }
+    private void validateSellWasteRequest(SellWasteRequest sellWasteRequest) {
+        if (sellWasteRequest.getType() == null) {
+            throw new IllegalArgumentException("Waste type is required.");
+        }
+    }
+
+    private Waste createWasteEntity(SellWasteRequest sellWasteRequest) {
         Waste waste = new Waste();
-        waste.setUserId(sellWasteRequest.getUserId());
         waste.setType(sellWasteRequest.getType());
         waste.setQuantity(sellWasteRequest.getQuantity());
+        return wasteRepository.save(waste);
+    }
+
+    private void associateWasteWithUser(User user, Waste waste) {
+        user.getWastes().add(waste);
+        waste.setUser(user); // Assuming Waste has a reference to User
         wasteRepository.save(waste);
-        return waste;
     }
 
     private Optional<User> userValidation(Long sellWasteRequest) {

@@ -1,5 +1,7 @@
 package com.africa.semiclon.capStoneProject.security.filters;
 
+import com.africa.semiclon.capStoneProject.data.models.User;
+import com.africa.semiclon.capStoneProject.data.repository.UserRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.LoginRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.ApiResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.ErrorResponse;
@@ -20,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;

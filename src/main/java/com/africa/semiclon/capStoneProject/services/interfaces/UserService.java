@@ -9,6 +9,7 @@ import com.africa.semiclon.capStoneProject.dtos.request.UpdateUserRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.CreateUserResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.SellWasteResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.UpdateUserResponse;
+import com.africa.semiclon.capStoneProject.dtos.response.WeightCollectedResponse;
 
 public interface UserService {
     
@@ -19,5 +20,6 @@ public interface UserService {
     UpdateUserResponse updateProfile(UpdateUserRequest updateUserRequest);
 
     SellWasteResponse sellWaste(SellWasteRequest sellWasteRequest);
+    WeightCollectedResponse getTotalWeightCollectedByUser(User user);
 
 }

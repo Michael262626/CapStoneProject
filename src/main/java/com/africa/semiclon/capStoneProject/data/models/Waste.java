@@ -27,13 +27,15 @@ public class Waste {
     @Id
     @GeneratedValue(strategy = AUTO)
     private Long wasteId;
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
     private String url;
-//    private Long agentId;
     @Enumerated(value = STRING)
     private Category type;
     private BigDecimal price;
-    private String quantity;
+    @Column(name = "quantity")
+    private Integer quantity;
     @Setter(AccessLevel.NONE)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
