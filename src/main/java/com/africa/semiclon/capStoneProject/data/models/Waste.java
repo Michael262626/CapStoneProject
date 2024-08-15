@@ -1,13 +1,12 @@
 package com.africa.semiclon.capStoneProject.data.models;
 
-import com.africa.semiclon.capStoneProject.data.models.Agent;
-import com.africa.semiclon.capStoneProject.data.models.User;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -23,17 +22,20 @@ import static java.time.LocalDateTime.now;
 @Getter
 @Entity
 @ToString
+@Table(name = "waste")
 public class Waste {
     @Id
     @GeneratedValue(strategy = AUTO)
     private Long wasteId;
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
     private String url;
-    private Long agentId;
     @Enumerated(value = STRING)
     private Category type;
     private BigDecimal price;
-    private String quantity;
+    @Column(name = "quantity")
+    private Integer quantity;
     @Setter(AccessLevel.NONE)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -42,11 +44,11 @@ public class Waste {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime timeUpdated;
+    @ManyToOne
+    private User uploader;
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime wasteCollectionDate;
-    @ManyToOne
-    private User uploader;
     @OneToOne
     private Agent agent;
     private String description;

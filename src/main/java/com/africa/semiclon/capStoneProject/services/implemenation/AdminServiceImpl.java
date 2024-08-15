@@ -74,7 +74,7 @@ public class AdminServiceImpl implements AdminService {
 
         response.setMessage("Successfully assigned");
         response.setWasteId(waste.getWasteId());
-        response.setAgentId(agent.getAgentId());
+        response.setAgentId(agent.getId());
         return response;
 
     }
@@ -133,7 +133,7 @@ public class AdminServiceImpl implements AdminService {
         agentRepository.save(agent);
         RegisterAgentResponse response = modelMapper.map(agent, RegisterAgentResponse.class);
         response.setMessage("Agent registered successfully");
-        response.setAgentId(agent.getAgentId());
+        response.setAgentId(agent.getId());
         return response;
 
     }

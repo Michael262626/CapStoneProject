@@ -5,9 +5,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class CreateUserRequest {
+public class FindAgentRequest {
     private String email;
-    private String username;
-    private String phoneNumber; 
-    private String password;
+    private Long id;
 }

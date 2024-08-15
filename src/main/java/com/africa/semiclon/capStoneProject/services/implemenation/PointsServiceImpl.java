@@ -8,6 +8,7 @@ import com.africa.semiclon.capStoneProject.data.repository.UserRepository;
 import com.africa.semiclon.capStoneProject.data.repository.WasteRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.AwardPointRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.AwardPointResponse;
+import com.africa.semiclon.capStoneProject.dtos.response.WeightCollectedResponse;
 import com.africa.semiclon.capStoneProject.exception.UserNotFoundException;
 import com.africa.semiclon.capStoneProject.exception.WasteNotFoundException;
 import com.africa.semiclon.capStoneProject.services.interfaces.PointsService;
@@ -50,11 +51,12 @@ public class PointsServiceImpl implements PointsService {
         response.setTotalPoints(points.getTotalPoints());
 
         return response;
-
     }
 
+
+
     private BigDecimal calculatePoints(Waste waste) {
-        BigDecimal quantityInKg = new BigDecimal(waste.getQuantity().replaceAll("[^\\d.]", ""));
+        BigDecimal quantityInKg = new BigDecimal(waste.getQuantity());
         BigDecimal pointsPerKg = new BigDecimal("10");
         return quantityInKg.multiply(pointsPerKg);
     }

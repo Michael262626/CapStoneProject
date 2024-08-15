@@ -19,5 +19,6 @@ public class Address {
     private String streetName;
     private String city;
     private String zipCode;
+//    private Agent agent
     private String postalCode;
 }
