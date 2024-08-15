@@ -35,7 +35,6 @@ public class AuthServiceImpl implements AuthServices {
 
     @Override
     public ApiResponse<RegisterResponse> register(RegisterRequest request) {
-            log.info("Trying to register new: {}", request.getRole());
 
             String username = request.getUsername().toLowerCase();
             validate(username);
@@ -51,7 +50,7 @@ public class AuthServiceImpl implements AuthServices {
             RegisterResponse registerResponse = mapper.map(newUser, RegisterResponse.class);
             registerResponse.setMessage("User registered successfully");
 
-            log.info("{} user registered successfully", request.getRole());
+
             return new ApiResponse<>(now(), true, registerResponse);
 
     }
@@ -89,7 +88,7 @@ public class AuthServiceImpl implements AuthServices {
     private User registerNewUser(RegisterRequest request) {
         User newUser = mapper.map(request, User.class);
         newUser.setAuthorities(new HashSet<>());
-        newUser.getAuthorities().add(request.getRole());
+
         return userRepository.save(newUser);
     }
 
