@@ -104,7 +104,7 @@ public class UserServiceTest {
         SellWasteRequest sellWasteRequest = new SellWasteRequest();
 //        sellWasteRequest.setUserId(userId);
         sellWasteRequest.setType(Category.PLASTIC);
-        sellWasteRequest.setQuantity("5kg");
+        sellWasteRequest.setQuantity(5);
         return userService.sellWaste(sellWasteRequest);
     }
 
