@@ -28,7 +28,7 @@ import static java.time.LocalDateTime.now;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = AUTO)
+    @GeneratedValue(strategy = IDENTITY)
     @Column(name = "user_id")
     private Long userId;
     private String username;
