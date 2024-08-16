@@ -14,6 +14,7 @@ import com.africa.semiclon.capStoneProject.exception.AgentNotFoundException;
 import com.africa.semiclon.capStoneProject.exception.InvalidEmailFormatException;
 import com.africa.semiclon.capStoneProject.exception.InvalidPasswordFormatException;
 import com.africa.semiclon.capStoneProject.exception.CollectWasteResponse;
+import com.africa.semiclon.capStoneProject.response.SearchWasteCollectedResponse;
 import com.africa.semiclon.capStoneProject.response.ViewWasteCollectedResponse;
 import com.africa.semiclon.capStoneProject.security.services.interfaces.AuthServices;
 import com.africa.semiclon.capStoneProject.services.ScaleReader;
@@ -41,16 +42,18 @@ public class AgentServiceImplementation implements AgentService {
     private final AgentRepository agentRepository;
     private final AddressRepository addressRepository;
     private final WasteCollectionRepository wasteCollectionRepository;
+    private final WasteRepository wasteRepository;
 
 
 
-    public AgentServiceImplementation(ModelMapper modelMapper, PasswordEncoder passwordEncoder, AgentRepository agentRepository, AuthServices authServices, AddressRepository addressRepository, WasteCollectionRepository wasteCollectionRepository) {
+    public AgentServiceImplementation(ModelMapper modelMapper, PasswordEncoder passwordEncoder, AgentRepository agentRepository, AuthServices authServices, AddressRepository addressRepository, WasteCollectionRepository wasteCollectionRepository, WasteRepository wasteRepository) {
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
         this.agentRepository = agentRepository;
         this.addressRepository = addressRepository;
 
         this.wasteCollectionRepository = wasteCollectionRepository;
+        this.wasteRepository = wasteRepository;
     }
 
     @Override
@@ -108,9 +111,11 @@ public class AgentServiceImplementation implements AgentService {
 
     @Override
     public CollectWasteResponse collectWaste(CollectWasteRequest collectWasteRequest) {
+        Agent agent = agentRepository.findByEmail(collectWasteRequest.getEmail());
+        if(agent != null){
         WasteCollection wasteCollection = modelMapper.map(collectWasteRequest, WasteCollection.class);
-        Agent agent = wasteCollection.getAgentId();
-        agentRepository.save(agent);
+        Agent agent1 = wasteCollection.getAgentId();
+        agentRepository.save(agent1);
         CollectWasteResponse response = new CollectWasteResponse();
         response.setMessage("Waste collected successfully");
         response.setWasteWeigh(collectWasteRequest.getWasteWeigh());
@@ -119,6 +124,11 @@ public class AgentServiceImplementation implements AgentService {
         response.setUserName(collectWasteRequest.getUsername());
 //        response.setUserId(collectWasteRequest.getUserId());
         return response;
+        }
+        else {
+            throw new AgentNotFoundException("Agent Not Found");
+        }
+        
     }
 
     public void startWeighingProcess(String portName, CollectWasteRequest collectWasteRequest) {
@@ -131,10 +141,11 @@ public class AgentServiceImplementation implements AgentService {
     }
 
     @Override
-
-
         public List<ViewWasteCollectedResponse> viewAllWasteCollected(ViewWasteCollectedRequest request) {
             List<WasteCollection> collections = wasteCollectionRepository.findByAgentId_Id(request.getAgentId());
+            if(collections == null || collections.isEmpty()) {
+                throw new AgentNotFoundException("Agent not found");
+            }
             return collections.stream()
                     .map(collection -> new ViewWasteCollectedResponse(
                             collection.getWasteCategory(),
@@ -144,6 +155,18 @@ public class AgentServiceImplementation implements AgentService {
                             .collect(Collectors.toList());
         }
 
+    @Override
+    public List<SearchWasteCollectedResponse> searchForWasteCollectedByTheUsername(SearchWasteCollectedRequest request) {
+        List<WasteCollection> wastes = wasteCollectionRepository.findByUsername(request.getUsername());
+        return wastes.stream()
+                .map(waste -> new SearchWasteCollectedResponse(
+                        waste.getId(),
+                        waste.getWasteCategory(),
+                        waste.getWasteWeigh(),
+                        waste.getUsername(),
+                        waste.getDateAndTimeCollected()))
+                .collect(Collectors.toList());
+    }
 
 
 

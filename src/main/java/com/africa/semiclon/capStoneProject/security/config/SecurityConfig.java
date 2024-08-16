@@ -39,6 +39,7 @@ public class SecurityConfig {
                 .addFilterBefore(authorizationFilter, CustomUsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(POST,"/api/v1/auth/**").permitAll()
+                        .requestMatchers(POST,"/api/v1/agent/collect").permitAll()
                         .requestMatchers("/api/v1/user/admin").hasAnyAuthority("ADMIN", "AGENT")
                         .requestMatchers("/api/payments/**").permitAll()
                         .anyRequest().authenticated()

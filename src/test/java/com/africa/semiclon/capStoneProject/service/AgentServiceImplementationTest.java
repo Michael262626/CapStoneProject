@@ -1,15 +1,13 @@
 package com.africa.semiclon.capStoneProject.service;
 
 import com.africa.semiclon.capStoneProject.data.models.Address;
-import com.africa.semiclon.capStoneProject.dtos.request.CollectWasteRequest;
-import com.africa.semiclon.capStoneProject.dtos.request.RegisterAgentRequest;
-import com.africa.semiclon.capStoneProject.dtos.request.UpdateAgentProfileRequest;
-import com.africa.semiclon.capStoneProject.dtos.request.ViewWasteCollectedRequest;
+import com.africa.semiclon.capStoneProject.dtos.request.*;
 import com.africa.semiclon.capStoneProject.dtos.response.RegisterAgentResponse;
 import com.africa.semiclon.capStoneProject.exception.AgentExistAlreadyException;
 import com.africa.semiclon.capStoneProject.dtos.response.UpdateAgentProfileResponse;
 import com.africa.semiclon.capStoneProject.exception.AgentNotFoundException;
 import com.africa.semiclon.capStoneProject.exception.CollectWasteResponse;
+import com.africa.semiclon.capStoneProject.response.SearchWasteCollectedResponse;
 import com.africa.semiclon.capStoneProject.response.ViewWasteCollectedResponse;
 import com.africa.semiclon.capStoneProject.services.interfaces.AgentService;
 import org.junit.jupiter.api.Test;
@@ -22,6 +20,7 @@ import java.util.List;
 import static com.africa.semiclon.capStoneProject.data.models.Category.PLASTIC;
 import static com.africa.semiclon.capStoneProject.data.models.Category.POLYTHENEBAG;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
@@ -122,12 +121,14 @@ public class AgentServiceImplementationTest {
 //    }
 
     @Test
+    @Sql(scripts = "/db/data.sql")
     public void testWasteCanBeCollectedByAgent() {
 
-        String portName = "COM6";
+        String portName = "COM10";
         CollectWasteRequest request = new CollectWasteRequest();
-        request.setAgentId(110L);
-        request.setUsername("user");
+        request.setAgentId(12L);
+        request.setEmail("agent1@gmail.com");
+        request.setUsername("Agent1");
         request.setWasteCategory(PLASTIC);
         agentService.initiateWasteCollection(portName);
         agentService.startWeighingProcess(portName, request);
@@ -137,20 +138,73 @@ public class AgentServiceImplementationTest {
         assertThat(response.getMessage()).isEqualTo("Waste collected successfully");
         assertThat(response.getWasteWeigh()).isEqualTo(50.0);
         assertThat(response.getWasteCategory()).isEqualTo(PLASTIC);
-        assertThat(response.getAgentId()).isEqualTo(110L);
-        assertThat(response.getUserName()).isEqualTo("user");
+        assertThat(response.getAgentId()).isEqualTo(12L);
+        assertThat(response.getUserName()).isEqualTo("Agent1");
 //        assertThat(response.getUserId()).isEqualTo(10L);
     }
 
     @Test
+    @Sql(scripts = "/db/data.sql")
+    public void testThatInvalidAgentCannotCollectWasteFromTheUser(){
+        String portName = "COM6";
+        CollectWasteRequest request = new CollectWasteRequest();
+        request.setAgentId(110L);
+        request.setUsername("user");
+        request.setWasteCategory(POLYTHENEBAG);
+        agentService.initiateWasteCollection(portName);
+        agentService.startWeighingProcess(portName, request);
+        request.setWasteWeigh(56.0);
+        assertThrows(AgentNotFoundException.class,()->agentService.collectWaste(request));
+
+    }
+
+    @Test
+    @Sql(scripts = "/db/data.sql")
     public void testThatAgentCanViewAllWasteCollected(){
         testWasteCanBeCollectedByAgent();
         ViewWasteCollectedRequest request = new ViewWasteCollectedRequest();
-        request.setAgentId(110L);
+        request.setAgentId(12L);
+        request.setEmail("agent1@gmail.com");
         List<ViewWasteCollectedResponse> viewWasteCollectedResponse = agentService.viewAllWasteCollected(request);
         assertThat(viewWasteCollectedResponse).isNotNull();
         //assertThat(viewWasteCollectedResponse.getMessage()).contains("Viewed successfully");
 
+
+    }
+
+    @Test
+    public void testThatInvalidAgentCannotViewAllWasteCollected(){
+      ViewWasteCollectedRequest request = new ViewWasteCollectedRequest();
+      request.setAgentId(160L);
+      assertThrows(AgentNotFoundException.class,()->agentService.viewAllWasteCollected(request));
+    }
+
+    @Test
+    @Sql(scripts = "/db/data.sql")
+    public void testThatAgentCanSearchForAWasteBelongingToAParticularUser(){
+        String portName = "COM10";
+        CollectWasteRequest request = new CollectWasteRequest();
+        request.setAgentId(12L);
+        request.setEmail("agent1@gmail.com");
+        request.setUsername("Agent1");
+        request.setWasteCategory(PLASTIC);
+        agentService.initiateWasteCollection(portName);
+        agentService.startWeighingProcess(portName, request);
+        request.setWasteWeigh(50.0);
+        CollectWasteResponse response = agentService.collectWaste(request);
+
+        assertThat(response.getMessage()).isEqualTo("Waste collected successfully");
+        assertThat(response.getWasteWeigh()).isEqualTo(50.0);
+        assertThat(response.getWasteCategory()).isEqualTo(PLASTIC);
+        assertThat(response.getAgentId()).isEqualTo(12L);
+        assertThat(response.getUserName()).isEqualTo("Agent1");
+
+        SearchWasteCollectedRequest request1 = new SearchWasteCollectedRequest();
+        request1.setUsername("Agent1");
+        List<SearchWasteCollectedResponse> responses = agentService.searchForWasteCollectedByTheUsername(request1);
+        assertThat(responses).isNotNull();
+//        assertEquals(request1.getUsername())
+        assertThat(responses.size()).isEqualTo(1);
 
     }
 

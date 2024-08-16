@@ -10,4 +10,5 @@ import lombok.Setter;
 public class ViewWasteCollectedRequest {
     @Id
     private Long agentId;
+    private String email;
 }

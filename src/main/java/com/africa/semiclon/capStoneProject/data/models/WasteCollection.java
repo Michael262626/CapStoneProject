@@ -17,8 +17,10 @@ public class WasteCollection {
     private Long id;
     @ManyToOne
     private User userId;
+    private String username;
     @ManyToOne
     private Agent agentId;
+    private String agentEmail;
     private Category wasteCategory;
     private Double wasteWeigh;
     @JsonSerialize
