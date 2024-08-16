@@ -18,7 +18,7 @@ INSERT INTO agents (username, id, password, phone_number, email, address_id_id, 
 VALUES
     ('Agent1', 12, 'password123', '08012345678', 'agent1@gmail.com', 100, '2024-07-04T15:03:03.792009700', '2024-09-04T15:03:03.792009700'),
     ('Agent2', 10, 'password123', '08012345678', 'agent3@gmail.com', 101, '2024-07-04T15:03:03.792009700', '2024-09-04T15:03:03.792009700'),
-('Agent2', 13, 'password123', '08012345678', 'agent4@gmail.com', 60, '2024-07-04T15:03:03.792009700', '2024-09-04T15:03:03.792009700');
+    ('Agent2', 13, 'password123', '08012345678', 'agent4@gmail.com', 60, '2024-07-04T15:03:03.792009700', '2024-09-04T15:03:03.792009700');
 
 
 -- Insert data into blacklisted_tokens table
