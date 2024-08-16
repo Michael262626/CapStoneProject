@@ -12,6 +12,7 @@ import com.africa.semiclon.capStoneProject.security.services.interfaces.AuthServ
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -26,6 +27,7 @@ import static java.time.temporal.ChronoUnit.HOURS;
 public class AuthServiceImpl implements AuthServices {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     private final ModelMapper mapper;
 
@@ -33,13 +35,24 @@ public class AuthServiceImpl implements AuthServices {
 
     @Override
     public ApiResponse<RegisterResponse> register(RegisterRequest request) {
-        String username = request.getUsername().toLowerCase();
-        validate(username);
-        request.setUsername(username);
-        User newUser = registerNewUser(request);
-        RegisterResponse registerResponse = mapper.map(newUser, RegisterResponse.class);
-        registerResponse.setMessage("User registered successfully");
-        return new ApiResponse<>(now(), true, registerResponse);
+
+            String username = request.getUsername().toLowerCase();
+            validate(username);
+            request.setUsername(username);
+
+            String encodedPassword = passwordEncoder.encode(request.getPassword());
+            request.setPassword(encodedPassword);
+
+            // Register the new user
+            User newUser = registerNewUser(request);
+
+            // Map the new user to the response object
+            RegisterResponse registerResponse = mapper.map(newUser, RegisterResponse.class);
+            registerResponse.setMessage("User registered successfully");
+
+
+            return new ApiResponse<>(now(), true, registerResponse);
+
     }
 
 
@@ -74,6 +87,8 @@ public class AuthServiceImpl implements AuthServices {
 
     private User registerNewUser(RegisterRequest request) {
         User newUser = mapper.map(request, User.class);
+        newUser.setAuthorities(new HashSet<>());
+
         return userRepository.save(newUser);
     }
 

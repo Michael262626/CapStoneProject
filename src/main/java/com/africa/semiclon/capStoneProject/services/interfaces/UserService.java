@@ -1,6 +1,8 @@
 package com.africa.semiclon.capStoneProject.services.interfaces;
 
 import com.africa.semiclon.capStoneProject.data.models.User;
+
+
 import com.africa.semiclon.capStoneProject.dtos.request.CreateUserRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.NotificationRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.SellWasteRequest;
@@ -8,6 +10,7 @@ import com.africa.semiclon.capStoneProject.dtos.request.UpdateUserRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.CreateUserResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.SellWasteResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.UpdateUserResponse;
+import com.africa.semiclon.capStoneProject.dtos.response.WeightCollectedResponse;
 
 import java.util.List;
 
@@ -22,4 +25,6 @@ public interface UserService {
     UpdateUserResponse updateProfile(UpdateUserRequest updateUserRequest);
 
     SellWasteResponse sellWaste(SellWasteRequest sellWasteRequest);
+    WeightCollectedResponse getTotalWeightCollectedByUser(User user);
+
 }

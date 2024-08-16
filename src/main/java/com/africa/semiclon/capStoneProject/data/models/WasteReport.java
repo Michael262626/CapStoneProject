@@ -19,7 +19,7 @@ public class WasteReport {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long wasteId;
     private Category category;
-    private String quantity;
+    private Integer quantity;
     private BigDecimal price;
     private String assignedAgent;
     @JsonSerialize(using = LocalDateTimeSerializer.class)

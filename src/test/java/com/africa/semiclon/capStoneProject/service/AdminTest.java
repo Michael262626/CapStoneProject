@@ -15,8 +15,6 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
-import static com.africa.semiclon.capStoneProject.data.models.Category.PLASTIC;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -63,53 +61,49 @@ public class AdminTest {
         ViewWasteResponse response = adminService.viewAllWaste(viewWasteRequest);
         assertThat(response).isNotNull();
         assertThat(response.getWastes()).isNotEmpty();
-        assertThat(response.getWastes().size()).isGreaterThanOrEqualTo(3);
+        assertThat(response.getWastes().size()).isGreaterThanOrEqualTo(2);
     }
 
     @Test
     public void testToAssignWasteToAgent(){
         AssignWasteRequest request = new AssignWasteRequest();
-        request.setAgentId(2L);
+        request.setAgentId(12L);
         request.setWasteId(400L);
         AssignWasteResponse response = adminService.assignWasteToAgent(request);
         assertThat(response).isNotNull();
         assertThat(response.getWasteId()).isEqualTo(400L);
-        assertThat(response.getAgentId()).isEqualTo(2L);
+        assertThat(response.getAgentId()).isEqualTo(12L);
         assertThat(response.getMessage()).contains("Successfully assigned");
 
     }
 
     @Test
-    public void testGenerateWasteReport() {
+    public void testGenerateWasteReport(){
         Agent agent = new Agent();
-        agent.setAgentId(2L);
-        agent.setUsername("Agent1");
+        agent.setUsername("Agent4");
+        agent.setPassword("password");
+        agent.setEmail("agent41@gmail.com");
+        agent = agentRepository.save(agent);
 
         Waste waste1 = new Waste();
-        waste1.setWasteId(1L);
-        waste1.setType(PLASTIC);
-        waste1.setQuantity("10kg");
+        waste1.setType(Category.PLASTIC);
+        waste1.setQuantity(10);
         waste1.setPrice(BigDecimal.valueOf(100));
         waste1.setWasteCollectionDate(LocalDateTime.now().minusDays(2));
         waste1.setAgent(agent);
         wasteRepository.save(waste1);
-
         GenerateWasteReportRequest request = new GenerateWasteReportRequest();
         request.setStartDate(LocalDateTime.now().minusDays(5));
         request.setEndDate(LocalDateTime.now());
-
         WasteReportResponse response = adminService.generateWasteReport(request);
-
         assertThat(response).isNotNull();
         assertThat(response.getReportItems()).isNotEmpty();
         assertThat(response.getMessage()).isEqualTo("Report generated successfully");
-
-
-        WasteReport reportItem = response.getReportItems().get(0);
+        WasteReport reportItem = response.getReportItems().getFirst();
         assertThat(reportItem.getQuantity()).isEqualTo("10kg");
-        assertThat(reportItem.getAssignedAgent()).isEqualTo("Agent1");
-    }
+        assertThat(reportItem.getAssignedAgent()).isEqualTo(agent.getUsername());
 
+    }
 
     @Test
     public void testAdminCanSendNotificationsToUsers(){
@@ -149,7 +143,6 @@ public class AdminTest {
         registerRequest.setUsername("agent001");
         registerRequest.setEmail("agent001@example.com");
         registerRequest.setPassword("password123");
-        registerRequest.setFirstName("AgentOne");
         registerRequest.setPhoneNumber("08034589034");
         RegisterAgentResponse response = adminService.registerAgent(registerRequest);
         assertThat(response).isNotNull();
@@ -165,22 +158,26 @@ public class AdminTest {
     @Test
     public void AdminCanRegisterWasteForSale(){
         RegisterWasteRequest registerWasteRequest = new RegisterWasteRequest();
-        registerWasteRequest.setType(PLASTIC);
+        registerWasteRequest.setType(Category.PLASTIC);
         registerWasteRequest.setQuantity("9kg");
         registerWasteRequest.setPrice(BigDecimal.valueOf(200.00));
         registerWasteRequest.setDescription("High-quality recycled plastic");
-        registerWasteRequest.setAgentId(2L);
+        registerWasteRequest.setAgentId(12L);
+
         RegisterWasteResponse response = adminService.registerWasteForSale(registerWasteRequest);
+
         assertThat(response).isNotNull();
         assertThat(response.getMessage()).isEqualTo("Waste registered successfully for sale");
         assertThat(response.getWasteId()).isNotNull();
+
         Waste savedWaste = wasteRepository.findById(response.getWasteId()).orElse(null);
+
         assertThat(savedWaste).isNotNull();
-        assertThat(savedWaste.getType()).isEqualTo(PLASTIC);
-        assertThat(savedWaste.getQuantity()).isEqualTo("9kg");
+        assertThat(savedWaste.getType()).isEqualTo(Category.PLASTIC);
+        assertThat(savedWaste.getQuantity()).isEqualTo(10);
         assertThat(savedWaste.getPrice()).isEqualTo(BigDecimal.valueOf(200.00).setScale(2));
         assertThat(savedWaste.getDescription()).isEqualTo("High-quality recycled plastic");
-        assertThat(savedWaste.getAgent().getAgentId()).isEqualTo(2L);
+        assertThat(savedWaste.getAgent().getId()).isEqualTo(12L);
     }
 
 

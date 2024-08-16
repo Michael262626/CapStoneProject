@@ -2,8 +2,16 @@ package com.africa.semiclon.capStoneProject.data.repository;
 
 import com.africa.semiclon.capStoneProject.data.models.Agent;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface AgentRepository extends JpaRepository<Agent, Long> {
+import java.util.Optional;
+
+public interface AgentRepository extends JpaRepository<Agent,Long> {
+
+    Agent findByEmail(String email);
+
+
+
+    Optional<Agent> findByUsername(String username);
 }
+
+

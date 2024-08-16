@@ -1,15 +1,22 @@
 package com.africa.semiclon.capStoneProject.dtos.request;
 
+
+import com.africa.semiclon.capStoneProject.data.models.Address;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
 @Setter
+@Getter
+
 public class RegisterAgentRequest {
-    private String firstName;
-    private String username;
-    private String password;
+    @Id
+    private Long id;
     private String email;
     private String phoneNumber;
+    private String password;
+    private String username;
+
+
 
 }
