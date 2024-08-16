@@ -87,7 +87,7 @@ public class AdminTest {
 
         Waste waste1 = new Waste();
         waste1.setType(Category.PLASTIC);
-        waste1.setQuantity("10kg");
+        waste1.setQuantity(10);
         waste1.setPrice(BigDecimal.valueOf(100));
         waste1.setWasteCollectionDate(LocalDateTime.now().minusDays(2));
         waste1.setAgent(agent);
@@ -174,7 +174,7 @@ public class AdminTest {
 
         assertThat(savedWaste).isNotNull();
         assertThat(savedWaste.getType()).isEqualTo(Category.PLASTIC);
-        assertThat(savedWaste.getQuantity()).isEqualTo("9kg");
+        assertThat(savedWaste.getQuantity()).isEqualTo(10);
         assertThat(savedWaste.getPrice()).isEqualTo(BigDecimal.valueOf(200.00).setScale(2));
         assertThat(savedWaste.getDescription()).isEqualTo("High-quality recycled plastic");
         assertThat(savedWaste.getAgent().getId()).isEqualTo(12L);

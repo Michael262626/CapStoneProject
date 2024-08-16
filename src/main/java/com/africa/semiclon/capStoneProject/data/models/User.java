@@ -42,8 +42,8 @@ public class User {
     private List<Transaction> transactions = new ArrayList<>();
     @OneToMany(fetch = FetchType.EAGER)
     private List<Waste> wastes = new ArrayList<>();
-    @Column(name = "total_weight_collected", nullable = false)
-    private Integer totalWeightCollected;
+//    @Column(name = "total_weight_collected", nullable = false)
+//    private Integer totalWeightCollected;
     private String phoneNumber;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PaymentPayStack> paymentPayStacks = new ArrayList<>();
