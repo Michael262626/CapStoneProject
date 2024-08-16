@@ -89,17 +89,12 @@ public class UserServiceImpl implements UserService {
     public SellWasteResponse sellWaste(SellWasteRequest sellWasteRequest) {
         validateSellWasteRequest(sellWasteRequest);
 
-        // Fetch the current user (assuming it's done via some security context or session)
-        User user = userRepository.findById(10L).orElseThrow(() -> new IllegalStateException("User not found. Please log in."));
-
         // Create waste entity based on the request
         Waste waste = createWasteEntity(sellWasteRequest);
 
         // Associate waste with the user and save
-        associateWasteWithUser(user, waste);
-
         // Accumulate the quantity of waste sold by the user
-        accumulateUserWaste(user, waste.getQuantity());
+//        accumulateUserWaste(user, waste.getQuantity());
 
         // Prepare response
         SellWasteResponse response = new SellWasteResponse();
@@ -109,14 +104,14 @@ public class UserServiceImpl implements UserService {
     }
 
     // Helper method to accumulate the waste quantity
-    private void accumulateUserWaste(User user, int soldQuantity) {
-        // Assuming user has a field `totalWeightCollected` to track the accumulated waste
-        int currentTotal = user.getTotalWeightCollected();
-
-        user.setTotalWeightCollected(currentTotal + soldQuantity);
-
-        userRepository.save(user);
-    }
+//    private void accumulateUserWaste(User user, int soldQuantity) {
+//        // Assuming user has a field `totalWeightCollected` to track the accumulated waste
+//        int currentTotal = user.getTotalWeightCollected();
+//
+//        user.setTotalWeightCollected(currentTotal + soldQuantity);
+//
+//        userRepository.save(user);
+//    }
     @Override
     public WeightCollectedResponse getTotalWeightCollectedByUser(User user) {
         List<Waste> wasteList = user.getWastes();
@@ -142,11 +137,7 @@ public class UserServiceImpl implements UserService {
         return wasteRepository.save(waste);
     }
 
-    private void associateWasteWithUser(User user, Waste waste) {
-        user.getWastes().add(waste);
-        waste.setUser(user); // Assuming Waste has a reference to User
-        wasteRepository.save(waste);
-    }
+
 
     private Optional<User> userValidation(Long sellWasteRequest) {
         Optional<User> optionalUser = userRepository.findById(sellWasteRequest);

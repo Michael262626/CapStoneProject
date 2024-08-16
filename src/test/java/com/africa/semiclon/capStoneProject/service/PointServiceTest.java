@@ -43,7 +43,7 @@ public class PointServiceTest {
 
         Waste waste = new Waste();
         waste.setType(Category.PLASTIC);
-        waste.setQuantity("10kg");
+        waste.setQuantity(10);
         wasteRepository.save(waste);
 
         Points points = new Points();
@@ -89,7 +89,7 @@ public class PointServiceTest {
 
         Waste waste = new Waste();
         waste.setType(Category.POLYTHENEBAG);
-        waste.setQuantity("2kg");
+        waste.setQuantity(10);
         wasteRepository.save(waste);
 
         AwardPointRequest request = new AwardPointRequest();
@@ -129,7 +129,7 @@ public class PointServiceTest {
         userRepository.save(user);
         Waste waste = new Waste();
         waste.setType(Category.POLYTHENEBAG);
-        waste.setQuantity("2kg");
+        waste.setQuantity(10);
         wasteRepository.save(waste);
         AwardPointRequest request = new AwardPointRequest();
         request.setUserId(user.getUserId());
