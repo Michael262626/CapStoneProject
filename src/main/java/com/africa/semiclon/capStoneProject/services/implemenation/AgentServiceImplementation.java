@@ -4,7 +4,6 @@ import com.africa.semiclon.capStoneProject.data.models.*;
 import com.africa.semiclon.capStoneProject.data.repository.AddressRepository;
 import com.africa.semiclon.capStoneProject.data.repository.AgentRepository;
 import com.africa.semiclon.capStoneProject.data.repository.WasteCollectionRepository;
-import com.africa.semiclon.capStoneProject.data.repository.WasteRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.*;
 import com.africa.semiclon.capStoneProject.dtos.response.RegisterAgentResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.SendWasteDetailResponse;
@@ -16,12 +15,8 @@ import com.africa.semiclon.capStoneProject.exception.InvalidPasswordFormatExcept
 import com.africa.semiclon.capStoneProject.exception.CollectWasteResponse;
 import com.africa.semiclon.capStoneProject.response.ViewWasteCollectedResponse;
 import com.africa.semiclon.capStoneProject.security.services.interfaces.AuthServices;
-import com.africa.semiclon.capStoneProject.services.ScaleReader;
 import com.africa.semiclon.capStoneProject.services.interfaces.AgentService;
-import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
-import org.modelmapper.spi.MappingContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,8 +24,6 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.hibernate.Hibernate.map;
 
 @Service
 public class AgentServiceImplementation implements AgentService {
@@ -121,14 +114,14 @@ public class AgentServiceImplementation implements AgentService {
         return response;
     }
 
-    public void startWeighingProcess(String portName, CollectWasteRequest collectWasteRequest) {
-        ScaleReader reader = new ScaleReader();
-        reader.readFromScale(portName, weight -> {
-            collectWasteRequest.setWasteWeigh(Double.valueOf(weight));
-            CollectWasteResponse response = collectWaste(collectWasteRequest);
-            response.setMessage("Waste weigh collected successfully");
-        });
-    }
+//    public void startWeighingProcess(String portName, CollectWasteRequest collectWasteRequest) {
+//        ScaleReader reader = new ScaleReader();
+//        reader.readFromScale(portName, weight -> {
+//            collectWasteRequest.setWasteWeigh(Double.valueOf(weight));
+//            CollectWasteResponse response = collectWaste(collectWasteRequest);
+//            response.setMessage("Waste weigh collected successfully");
+//        });
+//    }
 
     @Override
 
@@ -143,8 +136,6 @@ public class AgentServiceImplementation implements AgentService {
                             collection.getWasteWeigh()))
                             .collect(Collectors.toList());
         }
-
-
 
 
     private void verifyAgentExistence(String email) {
@@ -177,6 +168,10 @@ public class AgentServiceImplementation implements AgentService {
         startWeighingProcess(portName, request);
     }
 
+    @Override
+    public void startWeighingProcess(String portName, CollectWasteRequest request) {
+
+    }
 
 
 }
