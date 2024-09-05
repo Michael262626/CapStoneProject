@@ -8,15 +8,13 @@ import com.africa.semiclon.capStoneProject.data.repository.WasteRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.CreateUserRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.SellWasteRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.UpdateUserRequest;
-import com.africa.semiclon.capStoneProject.dtos.response.CreateUserResponse;
-import com.africa.semiclon.capStoneProject.dtos.response.SellWasteResponse;
-import com.africa.semiclon.capStoneProject.dtos.response.UpdateUserResponse;
-import com.africa.semiclon.capStoneProject.dtos.response.WeightCollectedResponse;
+import com.africa.semiclon.capStoneProject.dtos.response.*;
 import com.africa.semiclon.capStoneProject.exception.*;
 import com.africa.semiclon.capStoneProject.security.providers.CustomAuthenticationProvider;
 import com.africa.semiclon.capStoneProject.services.interfaces.UserService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -83,6 +81,13 @@ public class UserServiceImpl implements UserService {
         UpdateUserResponse response = modelMapper.map(updatedUser, UpdateUserResponse.class);
         response.setMessage("Profile updated successfully");
         return response;
+    }
+    @Override
+    public SearchResponse getUserIdByUsername(String request) {
+        User user = userRepository.findByUsername(request)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        return modelMapper.map(user, SearchResponse.class);
     }
 
     @Override
