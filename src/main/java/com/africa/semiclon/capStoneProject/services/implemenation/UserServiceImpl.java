@@ -83,8 +83,8 @@ public class UserServiceImpl implements UserService {
         return response;
     }
     @Override
-    public SearchResponse getUserIdByUsername(String request) {
-        User user = userRepository.findByUsername(request)
+    public SearchResponse getUserIdByUsername(String username) {
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         return modelMapper.map(user, SearchResponse.class);

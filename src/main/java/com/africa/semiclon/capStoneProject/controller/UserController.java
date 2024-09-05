@@ -59,8 +59,8 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("/id")
-    public ResponseEntity<?> getUserId(@RequestBody SearchUserRequest request) {
-        var userId = userService.getUserIdByUsername(request.getUsername());
+    public ResponseEntity<?> getUserId(@RequestBody String username) {
+        var userId = userService.getUserIdByUsername(username);
         return ResponseEntity.ok(userId);
     }
 }

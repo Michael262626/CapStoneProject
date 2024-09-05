@@ -20,6 +20,6 @@ public interface UserService {
 
     SellWasteResponse sellWaste(SellWasteRequest sellWasteRequest);
     WeightCollectedResponse getTotalWeightCollectedByUser(User user);
-    SearchResponse getUserIdByUsername(String request);
+    SearchResponse getUserIdByUsername(String username);
 
 }
