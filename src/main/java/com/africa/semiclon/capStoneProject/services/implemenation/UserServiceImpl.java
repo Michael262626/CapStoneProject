@@ -137,8 +137,10 @@ public class UserServiceImpl implements UserService {
 
     private Waste createWasteEntity(SellWasteRequest sellWasteRequest) {
         Waste waste = new Waste();
+        User user = new User();
         waste.setType(sellWasteRequest.getType());
         waste.setQuantity(sellWasteRequest.getQuantity());
+        user.setUserId(sellWasteRequest.getId());
         return wasteRepository.save(waste);
     }
 
