@@ -41,11 +41,11 @@ public class SecurityConfig {
                 .addFilterBefore(authorizationFilter, CustomUsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(POST,"/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/agent/id").permitAll() // Allow public access
                         .requestMatchers("/api/v1/user/admin").hasAnyAuthority("ADMIN", "AGENT")
                         .requestMatchers("api/v1/admin/**").permitAll()
                         .requestMatchers("api/v1/user/sellWaste").permitAll()
                         .requestMatchers("/api/payments/**").permitAll()
-                        .requestMatchers("/api/v1/agent/id").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
