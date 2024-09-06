@@ -1,6 +1,7 @@
 package com.africa.semiclon.capStoneProject.controller;
 
 import com.africa.semiclon.capStoneProject.data.models.Agent;
+import com.africa.semiclon.capStoneProject.data.repository.UserRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.RegisterAgentRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.UpdateAgentProfileRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.RegisterAgentResponse;
@@ -8,6 +9,7 @@ import com.africa.semiclon.capStoneProject.dtos.response.UpdateAgentProfileRespo
 import com.africa.semiclon.capStoneProject.exception.AgentExistAlreadyException;
 import com.africa.semiclon.capStoneProject.exception.AgentNotFoundException;
 import com.africa.semiclon.capStoneProject.services.interfaces.AgentService;
+import com.africa.semiclon.capStoneProject.services.interfaces.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -23,7 +25,9 @@ import java.util.List;
 public class AgentController {
 
     private final AgentService agentService;
-    private final ApplicationEventPublisher publisher;
+
+    private final UserService userService;
+
 
     @GetMapping
     public List<Agent> getAgents() {
@@ -49,6 +53,11 @@ public class AgentController {
         }catch (AgentNotFoundException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+    @GetMapping("/id")
+    public ResponseEntity<?> getUserId(@RequestBody String username) {
+        var userId = userService.getUserIdByUsername(username);
+        return ResponseEntity.ok(userId);
     }
 
 
