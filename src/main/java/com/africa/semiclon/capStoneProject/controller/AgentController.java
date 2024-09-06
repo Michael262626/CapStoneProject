@@ -3,6 +3,7 @@ package com.africa.semiclon.capStoneProject.controller;
 import com.africa.semiclon.capStoneProject.data.models.Agent;
 import com.africa.semiclon.capStoneProject.data.repository.UserRepository;
 import com.africa.semiclon.capStoneProject.dtos.request.RegisterAgentRequest;
+import com.africa.semiclon.capStoneProject.dtos.request.SearchUserRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.UpdateAgentProfileRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.RegisterAgentResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.UpdateAgentProfileResponse;
@@ -54,11 +55,4 @@ public class AgentController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-    @GetMapping("/id")
-    public ResponseEntity<?> getUserId(@RequestBody String username) {
-        var userId = userService.getUserIdByUsername(username);
-        return ResponseEntity.ok(userId);
-    }
-
-
 }

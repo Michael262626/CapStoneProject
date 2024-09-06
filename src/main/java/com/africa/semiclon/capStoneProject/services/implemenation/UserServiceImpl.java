@@ -1,3 +1,4 @@
+
 package com.africa.semiclon.capStoneProject.services.implemenation;
 
 import  com.africa.semiclon.capStoneProject.data.models.Authority;
@@ -29,28 +30,28 @@ public class UserServiceImpl implements UserService {
 
     private final CustomAuthenticationProvider customUsernameProvider;
 
-        private final UserRepository userRepository;
-        private final WasteRepository wasteRepository;
-        private final ModelMapper modelMapper;
-        private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final WasteRepository wasteRepository;
+    private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
 
 
-        @Override
-        public CreateUserResponse register (CreateUserRequest createUserRequest){
-            validateEmptyString(createUserRequest);
+    @Override
+    public CreateUserResponse register (CreateUserRequest createUserRequest){
+        validateEmptyString(createUserRequest);
 
-            if (userRepository.existsByEmail(createUserRequest.getEmail())) {
+        if (userRepository.existsByEmail(createUserRequest.getEmail())) {
             throw new EmailExistsException("Email already exists: " + createUserRequest.getEmail());}
-            if (userRepository.existsByUsername(createUserRequest.getUsername())) {
+        if (userRepository.existsByUsername(createUserRequest.getUsername())) {
             throw new UsernameExistsException("Username already exists: " + createUserRequest.getUsername());}
-            if (userRepository.existsByPhoneNumber(createUserRequest.getPhoneNumber())) {
+        if (userRepository.existsByPhoneNumber(createUserRequest.getPhoneNumber())) {
             throw new PhoneNumberExistsException("Phone number already exists: " + createUserRequest.getPhoneNumber());}
-            User newUser = validateUserDetails(createUserRequest);
-            newUser = userRepository.save(newUser);
-            var response = modelMapper.map(newUser, CreateUserResponse.class);
-            response.setMessage("user registered successfully");
-            return response;
-        }
+        User newUser = validateUserDetails(createUserRequest);
+        newUser = userRepository.save(newUser);
+        var response = modelMapper.map(newUser, CreateUserResponse.class);
+        response.setMessage("user registered successfully");
+        return response;
+    }
 
     private static void validateEmptyString(CreateUserRequest createUserRequest) {
         if (isEmptyOrNullString(createUserRequest.getEmail())) {throw new UserDetailsCannotBeNullOrEmpty("Email cannot be null or empty");}
@@ -82,13 +83,7 @@ public class UserServiceImpl implements UserService {
         response.setMessage("Profile updated successfully");
         return response;
     }
-    @Override
-    public SearchResponse getUserIdByUsername(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        return modelMapper.map(user, SearchResponse.class);
-    }
 
     @Override
     public SellWasteResponse sellWaste(SellWasteRequest sellWasteRequest) {
@@ -140,7 +135,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         waste.setType(sellWasteRequest.getType());
         waste.setQuantity(sellWasteRequest.getQuantity());
-        user.setUserId(sellWasteRequest.getId());
+        user.setUsername(sellWasteRequest.getUsername());
         return wasteRepository.save(waste);
     }
 
@@ -176,5 +171,4 @@ public class UserServiceImpl implements UserService {
                         String.format("user with id %d not found", id)));
 
     }
-    }
-
+}

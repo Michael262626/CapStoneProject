@@ -7,6 +7,7 @@ import com.africa.semiclon.capStoneProject.dtos.response.CreateUserResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.SellWasteResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.UpdateUserResponse;
 import com.africa.semiclon.capStoneProject.dtos.response.WeightCollectedResponse;
+import com.africa.semiclon.capStoneProject.exception.AgentNotFoundException;
 import com.africa.semiclon.capStoneProject.services.interfaces.UserService;
 import com.africa.semiclon.capStoneProject.services.interfaces.WasteService;
 import lombok.AllArgsConstructor;
