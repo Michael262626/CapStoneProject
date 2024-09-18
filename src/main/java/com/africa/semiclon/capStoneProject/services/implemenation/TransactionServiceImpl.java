@@ -49,7 +49,6 @@ public class TransactionServiceImpl implements TransactionService {
 
         if (createPlanResponse != null && Boolean.TRUE.equals(createPlanResponse.getStatus())) {
             transactionRepository.save(Transaction.builder()
-                    .adminId(request.getAdminId())
                     .userId(request.getUserId())
                     .amount(createPlanResponse.getData().getAmount())
                     .gatewayResponse("Payment created")
