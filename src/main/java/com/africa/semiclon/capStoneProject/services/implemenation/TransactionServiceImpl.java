@@ -38,9 +38,6 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     public CreatePlanResponse makePaymentToUser(PaymentRequest request) {
-        adminRepository.findById(request.getAdminId())
-                .orElseThrow(() -> new AdminException("Admin not found"));
-
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
