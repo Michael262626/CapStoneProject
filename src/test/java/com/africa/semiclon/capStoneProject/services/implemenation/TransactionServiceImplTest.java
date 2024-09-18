@@ -37,7 +37,6 @@ public class TransactionServiceImplTest {
     @Transactional
     public void testMakePaymentToUser() {
         PaymentRequest request = new PaymentRequest();
-        request.setAdminId(300L);
         request.setUserId(10L);
         request.setAmount(BigDecimal.valueOf(100.00));
 
