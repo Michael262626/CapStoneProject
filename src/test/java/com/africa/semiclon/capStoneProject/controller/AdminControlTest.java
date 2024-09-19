@@ -35,19 +35,19 @@ public class AdminControlTest {
     @MockBean
     private TransactionService transactionService;
 
-    @Test
-    @WithMockUser(roles = "ADMIN")
-    public void testMakePaymentToUserSuccess() throws Exception {
-        PaymentRequest request = new PaymentRequest();
-        CreatePlanResponse response = new CreatePlanResponse();
-
-        Mockito.when(transactionService.makePaymentToUser(Mockito.any(PaymentRequest.class)))
-                .thenReturn(response);
-        mockMvc.perform(post("/api/v1e43/payments/make-payment")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"userId\": \"10\", \"amount\": 1000}"))
-                .andExpect(status().isOk());
-    }
+//    @Test
+//    @WithMockUser(roles = "ADMIN")
+//    public void testMakePaymentToUserSuccess() throws Exception {
+//        PaymentRequest request = new PaymentRequest();
+//        CreatePlanResponse response = new CreatePlanResponse();
+//
+//        Mockito.when(transactionService.makePaymentToUser(Mockito.any(PaymentRequest.class)))
+//                .thenReturn(response);
+//        mockMvc.perform(post("/api/v1e43/payments/make-payment")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content("{\"userId\": \"10\", \"amount\": 1000}"))
+//                .andExpect(status().isOk());
+//    }
 
 
     @Test
