@@ -26,7 +26,7 @@ public class AdminController {
         try {
             CreatePlanResponse response = transactionService.makePaymentToUser(request);
             return ResponseEntity.ok(response);
-        } catch (AdminException | UserNotFoundException e) {
+        } catch (UserNotFoundException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
