@@ -38,7 +38,7 @@ public class TransactionServiceImplTest {
     public void testMakePaymentToUser() {
         PaymentRequest request = new PaymentRequest();
         request.setUserId(10L);
-        request.setAmount(BigDecimal.valueOf(100.00));
+        request.setAmount((int) 100.00);
 
         CreatePlanResponse createPlanResponse = new CreatePlanResponse();
         createPlanResponse.setStatus(true);
