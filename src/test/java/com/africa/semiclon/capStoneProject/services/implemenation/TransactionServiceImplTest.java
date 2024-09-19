@@ -44,7 +44,7 @@ public class TransactionServiceImplTest {
         createPlanResponse.setStatus(true);
         createPlanResponse.setData(new CreatePlanResponse.Data());
 
-        CreatePlanResponse response = transactionService.makePaymentToUser(request);
+        InitializePaymentResponse response = transactionService.makePaymentToUser(request);
 
         assertNotNull(response);
         assertTrue(response.getStatus());
@@ -64,7 +64,7 @@ public class TransactionServiceImplTest {
 
         WithdrawRequest request = new WithdrawRequest();
         request.setUserId(10L);
-        request.setAmount(BigDecimal.valueOf(100.00));
+        request.setAmount(100);
 
         InitializePaymentResponse initializePaymentResponse = new InitializePaymentResponse();
         initializePaymentResponse.setStatus(true);
