@@ -43,7 +43,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         CreatePlanRequest createPlanRequest = new CreatePlanRequest();
         createPlanRequest.setName(user.getUsername());
-        createPlanRequest.setAmount(request.getAmount());
+        createPlanRequest.setAmount(BigDecimal.valueOf(request.getAmount()));
 
         CreatePlanResponse createPlanResponse = paystackService.createPlanResponse(createPlanRequest);
 

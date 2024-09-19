@@ -33,11 +33,9 @@ public class PaymentPayStack {
     private String gatewayResponse;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime paidAt;
 
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+
     private LocalDateTime createdAt;
 
     private String channel;

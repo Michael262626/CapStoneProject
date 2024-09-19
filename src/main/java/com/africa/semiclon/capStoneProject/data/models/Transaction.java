@@ -1,5 +1,9 @@
 package com.africa.semiclon.capStoneProject.data.models;
 
+import com.africa.semiclon.capStoneProject.constants.CustomBigDecimalDeserializer;
+import com.africa.semiclon.capStoneProject.constants.CustomBigDecimalSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -18,6 +22,8 @@ public class Transaction {
     private Long userId;
     private Long adminId;
     private String reference;
+    @JsonSerialize(using = CustomBigDecimalSerializer.class)
+    @JsonDeserialize(using = CustomBigDecimalDeserializer.class)
     private BigDecimal amount;
     private String gatewayResponse;
     private String paidAt;

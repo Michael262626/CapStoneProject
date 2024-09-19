@@ -43,9 +43,9 @@ public class AdminControlTest {
 
         Mockito.when(transactionService.makePaymentToUser(Mockito.any(PaymentRequest.class)))
                 .thenReturn(response);
-        mockMvc.perform(post("/api/payments/make-payment")
+        mockMvc.perform(post("/api/v1e43/payments/make-payment")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"adminId\": \"300\", \"userId\": \"10\", \"amount\": 1000}"))
+                        .content("{\"userId\": \"10\", \"amount\": 1000}"))
                 .andExpect(status().isOk());
     }
 
@@ -56,7 +56,7 @@ public class AdminControlTest {
         PaymentRequest request = new PaymentRequest(); // Populate as needed
         Mockito.when(transactionService.makePaymentToUser(Mockito.any(PaymentRequest.class)))
                 .thenThrow(new AdminException("Admin not found"));
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/payments/make-payment")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/payments/make-payment")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{ \"adminId\": \"1\", \"userId\": \"2\", \"amount\": 1000 }"))
                 .andExpect(status().isBadRequest())

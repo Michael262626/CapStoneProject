@@ -80,12 +80,8 @@ public class PaymentVerificationResponse {
         @JsonProperty("pricing_plan_type")
         private String pricingPlanType;
 
-        @JsonSerialize(using = LocalDateTimeSerializer.class)
-        @JsonDeserialize(using = LocalDateTimeDeserializer.class)
         private LocalDateTime createdAt;
 
-        @JsonSerialize(using = LocalDateTimeSerializer.class)
-        @JsonDeserialize(using = LocalDateTimeDeserializer.class)
         private LocalDateTime updatedAt;
 
         @PrePersist

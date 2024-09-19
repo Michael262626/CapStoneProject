@@ -18,10 +18,6 @@ public class CreatePlanRequest {
     @JsonProperty("name")
     private String name;
 
-    @NotNull(message = "Interval cannot be null")
-    @JsonProperty("interval")
-    private String interval;
-
     @NotNull(message = "Amount cannot be null")
     @JsonProperty("amount")
     @Digits(integer = 6, fraction = 2)

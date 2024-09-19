@@ -2,7 +2,10 @@ package com.africa.semiclon.capStoneProject.controller;
 
 import com.africa.semiclon.capStoneProject.dtos.request.*;
 import com.africa.semiclon.capStoneProject.dtos.response.*;
+import com.africa.semiclon.capStoneProject.exception.AdminException;
+import com.africa.semiclon.capStoneProject.exception.UserNotFoundException;
 import com.africa.semiclon.capStoneProject.services.interfaces.AdminService;
+import com.africa.semiclon.capStoneProject.services.interfaces.TransactionService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,17 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
 
     private final AdminService adminService;
+    private final TransactionService transactionService;
+
+    @PostMapping("/makePayment")
+    public ResponseEntity<?> makePaymentToUser(@RequestBody PaymentRequest request) {
+        try {
+            CreatePlanResponse response = transactionService.makePaymentToUser(request);
+            return ResponseEntity.ok(response);
+        } catch (AdminException | UserNotFoundException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     @GetMapping("/manageUsers")
     public ResponseEntity<?> manageUsers(ManageUsersRequest manageUsersRequest) {
