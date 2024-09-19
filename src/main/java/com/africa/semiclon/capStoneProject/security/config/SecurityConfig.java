@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("api/v1/user/sellWaste").permitAll()
                         .requestMatchers("/api/v1/payments/**").permitAll()
                         .requestMatchers("/api/v1/admin/makePayment").permitAll()
+                        .requestMatchers("/api/v1/admin/processWithdrawal").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))

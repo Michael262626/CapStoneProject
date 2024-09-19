@@ -24,10 +24,19 @@ public class AdminController {
     @PostMapping("/makePayment")
     public ResponseEntity<?> makePaymentToUser(@RequestBody PaymentRequest request) {
         try {
-            CreatePlanResponse response = transactionService.makePaymentToUser(request);
+            InitializePaymentResponse response = transactionService.makePaymentToUser(request);
             return ResponseEntity.ok(response);
         } catch (UserNotFoundException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @PostMapping("/processWithdrawal")
+    public ResponseEntity<?> processWithdrawal(@RequestBody WithdrawRequest request) {
+        try {
+            transactionService.processWithdrawal(request);
+            return ResponseEntity.ok().build();
+        } catch (UserNotFoundException | IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
         }
     }
 

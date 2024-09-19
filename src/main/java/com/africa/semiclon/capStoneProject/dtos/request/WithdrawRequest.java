@@ -9,5 +9,5 @@ import java.math.BigDecimal;
 @Setter
 public class WithdrawRequest {
    private Long userId;
-   private BigDecimal amount;
+   private int amount;
 }

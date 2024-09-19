@@ -4,6 +4,7 @@ package com.africa.semiclon.capStoneProject.controller;
 import com.africa.semiclon.capStoneProject.dtos.request.PaymentRequest;
 import com.africa.semiclon.capStoneProject.dtos.request.WithdrawRequest;
 import com.africa.semiclon.capStoneProject.dtos.response.CreatePlanResponse;
+import com.africa.semiclon.capStoneProject.dtos.response.InitializePaymentResponse;
 import com.africa.semiclon.capStoneProject.exception.AdminException;
 import com.africa.semiclon.capStoneProject.exception.UserNotFoundException;
 import com.africa.semiclon.capStoneProject.services.interfaces.AdminService;
@@ -25,7 +26,7 @@ public class AdminControl {
     @PostMapping("/make-payment")
     public ResponseEntity<?> makePaymentToUser(@RequestBody PaymentRequest request) {
         try {
-            CreatePlanResponse response = transactionService.makePaymentToUser(request);
+            InitializePaymentResponse response = transactionService.makePaymentToUser(request);
             return ResponseEntity.ok(response);
         } catch (AdminException | UserNotFoundException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
